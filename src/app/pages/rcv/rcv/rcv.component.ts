@@ -47,7 +47,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
   popupVisible = false;
   popupEntityStore: ArrayStore;
   popupMode = 'Add';
-
+  phong = [];
 
   @ViewChild('mainForm', {static: false}) mainForm: DxFormComponent;
   @ViewChild('mainGrid', {static: false}) mainGrid: DxDataGridComponent;
@@ -196,35 +196,35 @@ export class RcvComponent implements OnInit, AfterViewInit {
   }
 
   getFilteredItemId(options): any {
-    const filtredRcvType = this.dsRcvType.filter(el => el.code === this.popupData.rcvTypecd);
-
-    const filter = [];
-    filter.push(['itemAdminId', '=', this.utilService.getCommonItemAdminId()]);
-
-
-    if (filtredRcvType.length > 0) {
-      filter.push('and');
-      const etcColumn1 = filtredRcvType[0].etcColumn1;
-      const typeArr = (etcColumn1 || '').split(',');
-
-      const innerCond = [];
-      // tslint:disable-next-line:forin
-      for (const idx in typeArr) {
-        const type = typeArr[idx].trim();
-        innerCond.push(['itemTypecd', '=', type]);
-
-        if (Number(idx) !== typeArr.length - 1) {
-          innerCond.push('or');
-        }
-      }
-
-      filter.push(innerCond);
-    }
-
-    return {
-      store: this.dsItemId,
-      filter: options.data ? filter : null
-    };
+    // const filtredRcvType = this.dsRcvType.filter(el => el.code === this.popupData.rcvTypecd);
+    //
+    // const filter = [];
+    // filter.push(['itemAdminId', '=', this.utilService.getCommonItemAdminId()]);
+    //
+    //
+    // if (filtredRcvType.length > 0) {
+    //   filter.push('and');
+    //   const etcColumn1 = filtredRcvType[0].etcColumn1;
+    //   const typeArr = (etcColumn1 || '').split(',');
+    //
+    //   const innerCond = [];
+    //   // tslint:disable-next-line:forin
+    //   for (const idx in typeArr) {
+    //     const type = typeArr[idx].trim();
+    //     innerCond.push(['itemTypecd', '=', type]);
+    //
+    //     if (Number(idx) !== typeArr.length - 1) {
+    //       innerCond.push('or');
+    //     }
+    //   }
+    //
+    //   filter.push(innerCond);
+    // }
+    //
+    // return {
+    //   store: this.dsItemId,
+    //   filter: options.data ? filter : null
+    // };
   }
 
   // tslint:disable-next-line:typedef
@@ -234,14 +234,12 @@ export class RcvComponent implements OnInit, AfterViewInit {
 
   async onSearch(): Promise<void> {
     const data = this.mainForm.instance.validate();
-    console.log(this.mainForm.formData);
 
     this.codeService.getCompany(this.G_TENANT, null, true, true, true, null, null, null).subscribe(result => {
       this.dsSupplier = result.data;
     });
 
     if (data.isValid) {
-      console.log(this.mainFormData);
 
       this.mainFormData.fromRcvSchDate = document.getElementsByName('fromRcvSchDate').item(1).getAttribute('value');
       this.mainFormData.toRcvSchDate = document.getElementsByName('toRcvSchDate').item(1).getAttribute('value');
@@ -275,56 +273,62 @@ export class RcvComponent implements OnInit, AfterViewInit {
     // this.onSelectionChangedCountry(null); // 조회시 필터 초기화
 
     // this.deleteBtn.visible = this.popupMode === 'Edit'; // 삭제버튼
-    // this.popupForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
+    this.popupForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
 
-    // if (this.popupData.rcvTypecd === 'RETUN') {
-    //   // 주문반품일 경우 거래처
-    //   this.codeService.getCompany(this.G_TENANT, null, true, true, null, null, null, null).subscribe(result => {
-    //     this.dsSupplier = result.data;
-    //   });
-    // } else {
-    //   // 거래처
-    //   this.codeService.getCompany(this.G_TENANT, null, null, null, true, null, null, null).subscribe(result => {
-    //     this.dsSupplier = result.data;
-    //   });
-    // }
-    console.log(this.gridUtil.getToday());
+    // không hiêủ
+
+    if (this.popupData.rcvTypecd === 'RETUN') {
+      // 주문반품일 경우 거래처
+      this.codeService.getCompany(this.G_TENANT, null, true, true, null, null, null, null).subscribe(result => {
+        this.dsSupplier = result.data;
+      });
+    } else {
+      // 거래처
+      this.codeService.getCompany(this.G_TENANT, null, null, null, true, null, null, null).subscribe(result => {
+        this.dsSupplier = result.data;
+      });
+    }
+
     if (this.popupMode === 'Add') { // 신규
-      this.popupForm.instance.getEditor('rcvSchDate').option('value', this.gridUtil.getToday());
-      this.popupData.companyId = Number(this.utilService.getCompanyId());
-      this.popupForm.instance.getEditor('warehouseId').option('value', this.utilService.getCommonWarehouseId());
-      this.popupForm.instance.getEditor('actFlg').option('value', RcvCommonUtils.FLAG_TRUE);
-      this.popupForm.instance.getEditor('sts').option('value', RcvCommonUtils.STS_IDLE);
 
+      this.popupForm.instance.getEditor('rcvSchDate').option('value', this.gridUtil.getToday());
+      this.popupForm.instance.getEditor('sts').option('value', RcvCommonUtils.STS_IDLE);
       this.popupForm.instance.getEditor('rcvTypecd').option('value', RcvCommonUtils.TYPE_STD);
+      this.popupForm.instance.getEditor('actFlg').option('value', RcvCommonUtils.FLAG_TRUE);
+      this.popupData.companyId = Number(this.utilService.getCompanyId());
+
+
+      // this.popupForm.instance.getEditor('warehouseId').option('value', this.utilService.getCommonWarehouseId());
+
     } else if (this.popupMode === 'Edit') { // 수정
 
     }
 
-    // const disabledCond = this.popupForm.instance.getEditor('sts').option('value') !== RcvCommonUtils.STS_IDLE || this.popupData.moveId != null;
-    //
-    // this.deleteBtn.visible = !disabledCond && this.popupMode === 'Edit';
-    // this.saveBtn.visible = !disabledCond;
-    // this.popupForm.instance.getEditor('supplierId').option('disabled', disabledCond);         // 예정일
-    // this.popupForm.instance.getEditor('actFlg').option('disabled', disabledCond);             // 사용여부
-    // this.popupForm.instance.getEditor('rcvTypecd').option('disabled', disabledCond);          // 입고타입
-    // this.popupForm.instance.getEditor('rcvSchDate').option('disabled', disabledCond);         // 예정일
-    //
-    // this.popupForm.instance.getEditor('supplierId').option('disabled', disabledCond);         // 공급처
-    // this.popupForm.instance.getEditor('refName').option('disabled', disabledCond);            // 담당자
-    // this.popupForm.instance.getEditor('supplierPhone').option('disabled', disabledCond);      // 연락처
-    // this.popupForm.instance.getEditor('supplierCountrycd').option('disabled', disabledCond);  // 국가
-    // this.popupForm.instance.getEditor('supplierPortcd').option('disabled', disabledCond);     // 항구
-    // this.popupForm.instance.getEditor('supplierZip').option('disabled', disabledCond);        // 우편번호
-    // this.popupForm.instance.getEditor('supplierAddress1').option('disabled', disabledCond);   // 주소1
-    // this.popupForm.instance.getEditor('supplierAddress2').option('disabled', disabledCond);   // 주소2
-    //
-    // this.popupForm.instance.getEditor('rcvTypecd').focus();
-    // this.supplierChangedFlg = true;
-    // this.portChangedFlg = true;
-    // this.popupGrid.instance.repaint();  // 스크롤 제거를 위해 refresh
-    // // 팝업 그리드 사이즈 조정
-    // this.utilService.setPopupGridHeight(this.popup, this.popupForm, this.popupGrid);
+    const disabledCond = this.popupForm.instance.getEditor('sts').option('value') !== RcvCommonUtils.STS_IDLE || this.popupData.moveId != null;
+    console.log(disabledCond);
+    // không có hiểu
+    this.deleteBtn.visible = !disabledCond && this.popupMode === 'Edit';
+    this.saveBtn.visible = !disabledCond;
+    this.popupForm.instance.getEditor('supplierId').option('disabled', disabledCond);         // 예정일
+    this.popupForm.instance.getEditor('actFlg').option('disabled', disabledCond);             // 사용여부
+    this.popupForm.instance.getEditor('rcvTypecd').option('disabled', disabledCond);          // 입고타입
+    this.popupForm.instance.getEditor('rcvSchDate').option('disabled', disabledCond);         // 예정일
+
+    this.popupForm.instance.getEditor('supplierId').option('disabled', disabledCond);         // 공급처
+    this.popupForm.instance.getEditor('refName').option('disabled', disabledCond);            // 담당자
+    this.popupForm.instance.getEditor('supplierPhone').option('disabled', disabledCond);      // 연락처
+    this.popupForm.instance.getEditor('supplierCountrycd').option('disabled', disabledCond);  // 국가
+    this.popupForm.instance.getEditor('supplierPortcd').option('disabled', disabledCond);     // 항구
+    this.popupForm.instance.getEditor('supplierZip').option('disabled', disabledCond);        // 우편번호
+    this.popupForm.instance.getEditor('supplierAddress1').option('disabled', disabledCond);   // 주소1
+    this.popupForm.instance.getEditor('supplierAddress2').option('disabled', disabledCond);   // 주소2
+
+    this.popupForm.instance.getEditor('rcvTypecd').focus();
+    this.supplierChangedFlg = true;
+    this.portChangedFlg = true;
+    this.popupGrid.instance.repaint();  // 스크롤 제거를 위해 refresh
+    // 팝업 그리드 사이즈 조정
+    this.utilService.setPopupGridHeight(this.popup, this.popupForm, this.popupGrid);
 
   }
 
