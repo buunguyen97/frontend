@@ -76,10 +76,29 @@ export class RcvComponent implements OnInit, AfterViewInit {
               public gridUtil: GridUtilService,
               private service: RcvService,
   ) {
+    this.popupSaveClick = this.popupSaveClick.bind(this);
+    this.popupCancelClick = this.popupCancelClick.bind(this);
+    this.popupDeleteClick = this.popupDeleteClick.bind(this);
+    this.onSelectionChangedWarehouse = this.onSelectionChangedWarehouse.bind(this);
+    this.onChangeSupplier = this.onChangeSupplier.bind(this);
+    this.getFilteredItemId = this.getFilteredItemId.bind(this);
+    this.setItemValue = this.setItemValue.bind(this);
+    this.onSelectionChangedCountry = this.onSelectionChangedCountry.bind(this);
+    this.isAllowEditing = this.isAllowEditing.bind(this);
+    // this.calculateCustomSummary = this.calculateCustomSummary.bind(this);
+    // this.popupShowing = this.popupShowing.bind(this);
   }
 
   ngAfterViewInit(): void {
+    this.popupEntityStore = new ArrayStore(
+      {
+        data: [], key: this.key
+      }
+    );
 
+    this.popupDataSource = new DataSource({
+      store: this.popupEntityStore
+    });
 
     this.utilService.getFoldable(this.mainForm, this.foldableBtn);
     this.utilService.getGridHeight(this.mainGrid);
@@ -106,6 +125,14 @@ export class RcvComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
+
+
+
+
+
+
+
+
     this.entityStore = new ArrayStore(
       {
         data: [],
@@ -136,6 +163,11 @@ export class RcvComponent implements OnInit, AfterViewInit {
       this.dsOwner = result.data;
       this.mainForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
     });
+        // 전체 품목
+        this.codeService.getItem(this.G_TENANT).subscribe(result => {
+          this.dsItemId = result.data;
+          this.dsFilteredItemId = this.dsItemId.filter(el => el.itemAdminId === this.utilService.getCommonItemAdminId());
+        });
     // 사용여부
     this.codeService.getCode(this.G_TENANT, 'YN').subscribe(result => {
       this.dsActFlg = result.data;
@@ -196,35 +228,35 @@ export class RcvComponent implements OnInit, AfterViewInit {
   }
 
   getFilteredItemId(options): any {
-    // const filtredRcvType = this.dsRcvType.filter(el => el.code === this.popupData.rcvTypecd);
-    //
-    // const filter = [];
-    // filter.push(['itemAdminId', '=', this.utilService.getCommonItemAdminId()]);
-    //
-    //
-    // if (filtredRcvType.length > 0) {
-    //   filter.push('and');
-    //   const etcColumn1 = filtredRcvType[0].etcColumn1;
-    //   const typeArr = (etcColumn1 || '').split(',');
-    //
-    //   const innerCond = [];
-    //   // tslint:disable-next-line:forin
-    //   for (const idx in typeArr) {
-    //     const type = typeArr[idx].trim();
-    //     innerCond.push(['itemTypecd', '=', type]);
-    //
-    //     if (Number(idx) !== typeArr.length - 1) {
-    //       innerCond.push('or');
-    //     }
-    //   }
-    //
-    //   filter.push(innerCond);
-    // }
-    //
-    // return {
-    //   store: this.dsItemId,
-    //   filter: options.data ? filter : null
-    // };
+    const filtredRcvType = this.dsRcvType.filter(el => el.code === this.popupData.rcvTypecd);
+
+    const filter = [];
+    filter.push(['itemAdminId', '=', this.utilService.getCommonItemAdminId()]);
+
+
+    if (filtredRcvType.length > 0) {
+      filter.push('and');
+      const etcColumn1 = filtredRcvType[0].etcColumn1;
+      const typeArr = (etcColumn1 || '').split(',');
+
+      const innerCond = [];
+      // tslint:disable-next-line:forin
+      for (const idx in typeArr) {
+        const type = typeArr[idx].trim();
+        innerCond.push(['itemTypecd', '=', type]);
+
+        if (Number(idx) !== typeArr.length - 1) {
+          innerCond.push('or');
+        }
+      }
+
+      filter.push(innerCond);
+    }
+
+    return {
+      store: this.dsItemId,
+      filter: options.data ? filter : null
+    };
   }
 
   // tslint:disable-next-line:typedef
@@ -491,7 +523,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
     // if (this.popupData.uid) {
     //   // Service의 get 함수 생성
     //   const result = await this.service.getRcvFull(this.popupData);
-    //
+
     //   // for (const r of result.data.rcvDetailList) {
     //   //   const item = this.dsItemId.filter(el => el.uid === r.itemId);
     //   //   r.unit3Stylecd = item.length > 0 ? item[0].unit3Stylecd : null;
@@ -502,9 +534,9 @@ export class RcvComponent implements OnInit, AfterViewInit {
     //   } else {
     //     this.popupGrid.instance.cancelEditData();
     //     this.utilService.notify_success('search success');
-    //
+
     //     this.popupData.moveId = result.data.moveId;
-    //
+
     //     this.popupEntityStore = new ArrayStore(
     //       {
     //         data: result.data.rcvDetailList,

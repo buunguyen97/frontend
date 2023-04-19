@@ -36,19 +36,27 @@ export class RcvService {
 
 export interface SearchVO {
   tenant: string;
-  rcvKey: string;
-  fromRcvSchDate: string;
 
-  toRcvSchDate: string;
-  fromReceiveDate: string;
-  toReceiveDate: string;
-  sts: string;
-  rcvTypecd: string;
-  supplierId: number;
-  warehouseId: number;
-  ownerId: number;
+  uid: number;
+  rcvKey: string;             // 입고번호
+  sts: string;                // 입고상태
+  stsList: string[];
+  rcvAcceptId: string;        // 입고접수키
+  acceptKey: string;          // 입고접수번호
+  rcvTypecd: string;          // 입고타입
+  rcvSchDate: Date;           // 입고예정일
+  receiveDate: Date;          // 입고실적일
+  supplierId: number;         // 공급처
+  supplierName: string;       // 공급처명
+  rcvSumItemCount: number;    // 총품목수
+  rcvSumQty1: number;         // 총품목수량
+  rcvSumBoxCount: number;     // 총BOX수
+  rcvSumEaCount: number;      // 총EA수
+  actFlg: string;             // 사용여부
+  remarks: string;            // 전표비고
 
   refName: string;            // 담당자
+  warehouseId: number;        // 창고코드
   supplierPhone: string;      // 연락처
   supplierCountrycd: string;  // 국가
   supplierPortcd: string;     // 항구
@@ -59,7 +67,12 @@ export interface SearchVO {
   logisticsId: number;        // 물류회사
 
   moveId: number;
+  fromRcvSchDate: string;   // from입고예정일
+  toRcvSchDate: string;     // to입고예정일
+  fromReceiveDate: string;  // from입고실적일
+  toReceiveDate: string;    // to입고실적일
 
+  ownerId: number;      // 화주
 
   rcvDetailList: RcvDetailVO[];
 
