@@ -100,20 +100,20 @@ export class RcvComponent implements OnInit, AfterViewInit {
   }
 
   initForm(): void {
-     // 공통 조회 조건 set
-     const rangeDate = this.utilService.getDateRange();
+    // 공통 조회 조건 set
+    const rangeDate = this.utilService.getDateRange();
 
-     this.mainForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
-     this.mainForm.instance.getEditor('warehouseId').option('value', this.utilService.getCommonWarehouseId());
-     this.mainForm.instance.getEditor('sts').option('value', RcvCommonUtils.STS_IDLE); // 예정
-     this.fromRcvSchDate.value = rangeDate.fromDate;
-     this.toRcvSchDate.value = rangeDate.toDate;
-     this.fromReceiveDate.value = '';
-     this.toReceiveDate.value = '';
+    this.mainForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
+    this.mainForm.instance.getEditor('warehouseId').option('value', this.utilService.getCommonWarehouseId());
+    this.mainForm.instance.getEditor('sts').option('value', RcvCommonUtils.STS_IDLE); // 예정
+    this.fromRcvSchDate.value = rangeDate.fromDate;
+    this.toRcvSchDate.value = rangeDate.toDate;
+    this.fromReceiveDate.value = '';
+    this.toReceiveDate.value = '';
 
-     // this.mainForm.instance.getEditor('fromRcvSchDate').option('value', fromDate);
-     // this.mainForm.instance.getEditor('toRcvSchDate').option('value', rangeDate.toDate);
-     this.mainForm.instance.focus();
+    // this.mainForm.instance.getEditor('fromRcvSchDate').option('value', fromDate);
+    // this.mainForm.instance.getEditor('toRcvSchDate').option('value', rangeDate.toDate);
+    this.mainForm.instance.focus();
 
   }
 
@@ -159,6 +159,11 @@ export class RcvComponent implements OnInit, AfterViewInit {
     this.codeService.getCode(this.G_TENANT, 'DAMAGEFLG').subscribe(result => {
       this.dsDamageFlg = result.data;
     });
+    // 전체 품목
+    this.codeService.getItem(this.G_TENANT).subscribe(result => {
+      this.dsItemId = result.data;
+      this.dsFilteredItemId = this.dsItemId.filter(el => el.itemAdminId === this.utilService.getCommonItemAdminId());
+    });
   }
 
   initData(form): void {
@@ -195,7 +200,6 @@ export class RcvComponent implements OnInit, AfterViewInit {
   }
 
   setItemValue(rowData: any, value: any): void {
-    alert(1)
     rowData.itemId = value;
     rowData.isSerial = this.dsItemId.filter(el => el.uid === value)[0].isSerial;          // 시리얼여부
     rowData.unit = value;
@@ -217,7 +221,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
     const filter = [];
     filter.push(['itemAdminId', '=', this.utilService.getCommonItemAdminId()]);
 
-   
+
     if (filtredRcvType.length > 0) {
       filter.push('and');
       const etcColumn1 = filtredRcvType[0].etcColumn1;
