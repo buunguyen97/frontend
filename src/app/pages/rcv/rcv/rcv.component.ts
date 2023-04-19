@@ -276,10 +276,11 @@ export class RcvComponent implements OnInit, AfterViewInit {
     console.log(this.gridUtil.getToday());
     if (this.popupMode === 'Add') { // 신규
       this.popupForm.instance.getEditor('rcvSchDate').option('value', this.gridUtil.getToday());
+      this.popupForm.instance.getEditor('sts').option('value', RcvCommonUtils.STS_IDLE);
       this.popupData.companyId = Number(this.utilService.getCompanyId());
       this.popupForm.instance.getEditor('warehouseId').option('value', this.utilService.getCommonWarehouseId());
       this.popupForm.instance.getEditor('actFlg').option('value', RcvCommonUtils.FLAG_TRUE);
-      this.popupForm.instance.getEditor('sts').option('value', RcvCommonUtils.STS_IDLE);
+
 
       this.popupForm.instance.getEditor('rcvTypecd').option('value', RcvCommonUtils.TYPE_STD);
     } else if (this.popupMode === 'Edit') { // 수정
