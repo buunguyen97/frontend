@@ -32,6 +32,42 @@ export class RcvService {
       };
     }
   }
+
+  async save(data: {}): Promise<ApiResult<SearchVO[]>> {
+    // 조회 Api 설정
+    const baseUrl = `${this.httpUrl}/saveRcvExpected`;
+
+    try {
+      // Post 방식으로 조회
+      const result = await this.http.post<ApiResult<SearchVO[]>>(baseUrl, data).toPromise();
+      return result;
+    } catch (e) {
+      return {
+        success: false,
+        data: null,
+        code: e.code,
+        msg: e.msg
+      };
+    }
+  }
+
+  async update(data: {}): Promise<ApiResult<SearchVO[]>> {
+    // 조회 Api 설정
+    const baseUrl = `${this.httpUrl}/updateRcvExpected`;
+
+    try {
+      // Post 방식으로 조회
+      const result = await this.http.post<ApiResult<SearchVO[]>>(baseUrl, data).toPromise();
+      return result;
+    } catch (e) {
+      return {
+        success: false,
+        data: null,
+        code: e.code,
+        msg: e.msg
+      };
+    }
+  }
 }
 
 export interface SearchVO {

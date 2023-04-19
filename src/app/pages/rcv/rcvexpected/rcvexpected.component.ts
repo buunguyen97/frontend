@@ -237,12 +237,12 @@ export class RcvexpectedComponent implements OnInit, AfterViewInit {
 
   // 그리드 Lookup filter
   getFilteredItemId(options): any {
-    const filtredRcvType = this.dsRcvType.filter(el => el.code === this.popupData.rcvTypecd);
 
+    const filtredRcvType = this.dsRcvType.filter(el => el.code === this.popupData.rcvTypecd);
     const filter = [];
     filter.push(['itemAdminId', '=', this.utilService.getCommonItemAdminId()]);
 
-
+    console.log(filter);
     if (filtredRcvType.length > 0) {
       filter.push('and');
       const etcColumn1 = filtredRcvType[0].etcColumn1;
