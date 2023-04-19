@@ -1,12 +1,12 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
-import {CommonUtilService} from '../../../shared/services/common-util.service';
-import {RcvService, SearchVO} from './rcv.service';
-import {DxFormComponent} from 'devextreme-angular/ui/form';
-import {DxButtonComponent, DxDataGridComponent, DxDateBoxComponent, DxPopupComponent} from 'devextreme-angular';
-import {CommonCodeService} from '../../../shared/services/common-code.service';
-import {RcvCommonUtils} from '../rcvCommonUtils';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
+import { CommonUtilService } from '../../../shared/services/common-util.service';
+import { RcvService, SearchVO } from './rcv.service';
+import { DxFormComponent } from 'devextreme-angular/ui/form';
+import { DxButtonComponent, DxDataGridComponent, DxDateBoxComponent, DxPopupComponent } from 'devextreme-angular';
+import { CommonCodeService } from '../../../shared/services/common-code.service';
+import { RcvCommonUtils } from '../rcvCommonUtils';
 import DataSource from 'devextreme/data/data_source';
-import {GridUtilService} from '../../../shared/services/grid-util.service';
+import { GridUtilService } from '../../../shared/services/grid-util.service';
 import ArrayStore from 'devextreme/data/array_store';
 
 
@@ -47,18 +47,18 @@ export class RcvComponent implements OnInit, AfterViewInit {
   popupVisible = false;
   popupEntityStore: ArrayStore;
   popupMode = 'Add';
+  phong = [];
 
-
-  @ViewChild('mainForm', {static: false}) mainForm: DxFormComponent;
-  @ViewChild('mainGrid', {static: false}) mainGrid: DxDataGridComponent;
-  @ViewChild('popupGrid', {static: false}) popupGrid: DxDataGridComponent;
-  @ViewChild('popupForm', {static: false}) popupForm: DxFormComponent;
-  @ViewChild('deleteBtn', {static: false}) deleteBtn: DxButtonComponent;
-  @ViewChild('saveBtn', {static: false}) saveBtn: DxButtonComponent;
-  @ViewChild('foldableBtn', {static: false}) foldableBtn: DxButtonComponent;
-  @ViewChild('popup', {static: false}) popup: DxPopupComponent;
-  @ViewChild('fromRcvSchDate', {static: false}) fromRcvSchDate: DxDateBoxComponent;
-  @ViewChild('toRcvSchDate', {static: false}) toRcvSchDate: DxDateBoxComponent;
+  @ViewChild('mainForm', { static: false }) mainForm: DxFormComponent;
+  @ViewChild('mainGrid', { static: false }) mainGrid: DxDataGridComponent;
+  @ViewChild('popupGrid', { static: false }) popupGrid: DxDataGridComponent;
+  @ViewChild('popupForm', { static: false }) popupForm: DxFormComponent;
+  @ViewChild('deleteBtn', { static: false }) deleteBtn: DxButtonComponent;
+  @ViewChild('saveBtn', { static: false }) saveBtn: DxButtonComponent;
+  @ViewChild('foldableBtn', { static: false }) foldableBtn: DxButtonComponent;
+  @ViewChild('popup', { static: false }) popup: DxPopupComponent;
+  @ViewChild('fromRcvSchDate', { static: false }) fromRcvSchDate: DxDateBoxComponent;
+  @ViewChild('toRcvSchDate', { static: false }) toRcvSchDate: DxDateBoxComponent;
 
 
   GRID_STATE_KEY = 'rcv_rcv';
@@ -70,9 +70,9 @@ export class RcvComponent implements OnInit, AfterViewInit {
   portChangedFlg = true;
 
   constructor(public utilService: CommonUtilService,
-              private codeService: CommonCodeService,
-              public gridUtil: GridUtilService,
-              private service: RcvService,
+    private codeService: CommonCodeService,
+    public gridUtil: GridUtilService,
+    private service: RcvService,
   ) {
   }
 
@@ -446,7 +446,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
 
   async onNew(e): Promise<void> {
     this.deleteBtn.visible = false;
-    this.showPopup('Add', {...e.data});
+    this.showPopup('Add', { ...e.data });
   }
 
   showPopup(popupMode, data): void {
@@ -462,7 +462,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
       store: this.popupEntityStore
     });
     this.popupData = data;
-    this.popupData = {tenant: this.G_TENANT, ...this.popupData};
+    this.popupData = { tenant: this.G_TENANT, ...this.popupData };
     this.popupMode = popupMode;
     this.popupVisible = true;
     this.onSearchPopup();
@@ -557,7 +557,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
       const focusedIdx = this.popupGrid.focusedRowIndex;
 
       this.popupGrid.instance.deleteRow(focusedIdx);
-      this.popupEntityStore.push([{type: 'remove', key: this.popupGrid.focusedRowKey}]);
+      this.popupEntityStore.push([{ type: 'remove', key: this.popupGrid.focusedRowKey }]);
 
       // 삭제된 로우 위로 포커스
       this.popupGrid.focusedRowIndex = focusedIdx - 1;
