@@ -59,6 +59,8 @@ export class RcvComponent implements OnInit, AfterViewInit {
   @ViewChild('popup', {static: false}) popup: DxPopupComponent;
   @ViewChild('fromRcvSchDate', {static: false}) fromRcvSchDate: DxDateBoxComponent;
   @ViewChild('toRcvSchDate', {static: false}) toRcvSchDate: DxDateBoxComponent;
+  @ViewChild('fromReceiveDate', {static: false}) fromReceiveDate: DxDateBoxComponent;
+  @ViewChild('toReceiveDate', {static: false}) toReceiveDate: DxDateBoxComponent;
 
 
   GRID_STATE_KEY = 'rcv_rcv';
@@ -86,8 +88,21 @@ export class RcvComponent implements OnInit, AfterViewInit {
   }
 
   initForm(): void {
+     // 공통 조회 조건 set
+     const rangeDate = this.utilService.getDateRange();
 
-    this.mainForm.instance.getEditor('sts').option('value', RcvCommonUtils.STS_IDLE); // 예정
+     this.mainForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
+     this.mainForm.instance.getEditor('warehouseId').option('value', this.utilService.getCommonWarehouseId());
+     this.mainForm.instance.getEditor('sts').option('value', RcvCommonUtils.STS_IDLE); // 예정
+     this.fromRcvSchDate.value = rangeDate.fromDate;
+     this.toRcvSchDate.value = rangeDate.toDate;
+     this.fromReceiveDate.value = '';
+     this.toReceiveDate.value = '';
+
+     // this.mainForm.instance.getEditor('fromRcvSchDate').option('value', fromDate);
+     // this.mainForm.instance.getEditor('toRcvSchDate').option('value', rangeDate.toDate);
+     this.mainForm.instance.focus();
+
   }
 
   ngOnInit(): void {
