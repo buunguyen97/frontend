@@ -47,7 +47,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
   popupVisible = false;
   popupEntityStore: ArrayStore;
   popupMode = 'Add';
-  phong = [];
+  thien = [];
 
   @ViewChild('mainForm', {static: false}) mainForm: DxFormComponent;
   @ViewChild('mainGrid', {static: false}) mainGrid: DxDataGridComponent;
