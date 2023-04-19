@@ -1,8 +1,8 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {APPCONSTANTS} from '../../../shared/constants/appconstants';
 import {JHttpService} from '../../../shared/services/jhttp.service';
 import {ApiResult} from '../../../shared/vo/api-result';
-import {RcvExpectedVO} from '../rcvexpected/rcvexpected.service';
+import {RcvDetailVO, RcvExpectedVO} from '../rcvexpected/rcvexpected.service';
 
 @Injectable({
   providedIn: 'root'
@@ -33,21 +33,38 @@ export class RcvService {
     }
   }
 }
+
 export interface SearchVO {
-  tenant:	string;
+  tenant: string;
   rcvKey: string;
   fromRcvSchDate: string;
 
-  toRcvSchDate:  string;
-  fromReceiveDate:  string;
-  toReceiveDate:  string;
+  toRcvSchDate: string;
+  fromReceiveDate: string;
+  toReceiveDate: string;
   sts: string;
   rcvTypecd: string;
   supplierId: number;
   warehouseId: number;
   ownerId: number;
 
+  refName: string;            // 담당자
+  supplierPhone: string;      // 연락처
+  supplierCountrycd: string;  // 국가
+  supplierPortcd: string;     // 항구
+  supplierZip: string;        // 우편번호
+  supplierAddress1: string;   // 주소1
+  supplierAddress2: string;   // 주소2
+  companyId: number;          // companyId
+  logisticsId: number;        // 물류회사
+
+  moveId: number;
+
+
+  rcvDetailList: RcvDetailVO[];
+
 }
+
 //
 //   // 기본 URL 선언
 //   httpUrl = `${APPCONSTANTS.BASE_URL_WM}/receive-service/rcv/rcvExpected`;

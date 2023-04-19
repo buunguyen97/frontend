@@ -16,6 +16,61 @@ import {RcvCommonUtils} from '../rcvCommonUtils';
 })
 export class RcvexpectedComponent implements OnInit, AfterViewInit {
 
+  @ViewChild('mainForm', {static: false}) mainForm: DxFormComponent;
+  @ViewChild('mainGrid', {static: false}) mainGrid: DxDataGridComponent;
+  @ViewChild('popupGrid', {static: false}) popupGrid: DxDataGridComponent;
+  @ViewChild('popupForm', {static: false}) popupForm: DxFormComponent;
+  @ViewChild('deleteBtn', {static: false}) deleteBtn: DxButtonComponent;
+  @ViewChild('saveBtn', {static: false}) saveBtn: DxButtonComponent;
+  @ViewChild('foldableBtn', {static: false}) foldableBtn: DxButtonComponent;
+  @ViewChild('popup', {static: false}) popup: DxPopupComponent;
+  @ViewChild('fromRcvSchDate', {static: false}) fromRcvSchDate: DxDateBoxComponent;
+  @ViewChild('toRcvSchDate', {static: false}) toRcvSchDate: DxDateBoxComponent;
+  @ViewChild('fromReceiveDate', {static: false}) fromReceiveDate: DxDateBoxComponent;
+  @ViewChild('toReceiveDate', {static: false}) toReceiveDate: DxDateBoxComponent;
+  dsActFlg = []; // 사용여부
+  dsDamageFlg = []; // 불량여부
+  dsRcvStatus = []; // 입고상태
+  dsRcvType = []; // 입고타입
+  dsCountry = []; // 국가
+  dsWarehouse = []; // 창고
+  dsPort = []; // 항구 필터
+  copyPort = []; // 전체 항구
+  dsOwner = []; // 화주
+  dsSupplier = []; // 공급처
+  dsAllSupplier = [];
+  dsItemAdmin = []; // 품목관리사
+  dsItemId = []; // 품목
+  dsUser = []; // 사용자
+  dsUnitStyle = []; // 단위유형
+  dsFilteredItemId = [];
+  // Global
+  G_TENANT: any;
+  mainFormData: RcvExpectedVO = {} as RcvExpectedVO;
+  // Grid Popup
+  popupVisible = false;
+  popupMode = 'Add';
+  popupData: RcvExpectedVO;
+  // grid
+  dataSource: DataSource;
+  popupDataSource: DataSource;
+  entityStore: ArrayStore;
+  popupEntityStore: ArrayStore;
+  selectedRows: number[];
+  deleteRowList = [];
+  changes = [];
+  key = 'uid';
+  // summary
+  searchList = [];
+  // Grid State
+  GRID_STATE_KEY = 'rcv_rcvexpected1';
+  loadStateMain = this.gridUtil.fnGridLoadState(this.GRID_STATE_KEY + '_main');
+  saveStateMain = this.gridUtil.fnGridSaveState(this.GRID_STATE_KEY + '_main');
+  loadStatePopup = this.gridUtil.fnGridLoadState(this.GRID_STATE_KEY + '_popup');
+  saveStatePopup = this.gridUtil.fnGridSaveState(this.GRID_STATE_KEY + '_popup');
+  supplierChangedFlg = true;  // 공급처 선택이벤트 활성화 여부
+  portChangedFlg = true;
+
   constructor(public utilService: CommonUtilService,
               private service: RcvexpectedService,
               private codeService: CommonCodeService,
@@ -34,71 +89,6 @@ export class RcvexpectedComponent implements OnInit, AfterViewInit {
     this.calculateCustomSummary = this.calculateCustomSummary.bind(this);
     this.popupShowing = this.popupShowing.bind(this);
   }
-
-  @ViewChild('mainForm', {static: false}) mainForm: DxFormComponent;
-  @ViewChild('mainGrid', {static: false}) mainGrid: DxDataGridComponent;
-  @ViewChild('popupGrid', {static: false}) popupGrid: DxDataGridComponent;
-  @ViewChild('popupForm', {static: false}) popupForm: DxFormComponent;
-  @ViewChild('deleteBtn', {static: false}) deleteBtn: DxButtonComponent;
-  @ViewChild('saveBtn', {static: false}) saveBtn: DxButtonComponent;
-  @ViewChild('foldableBtn', {static: false}) foldableBtn: DxButtonComponent;
-
-  @ViewChild('popup', {static: false}) popup: DxPopupComponent;
-
-  @ViewChild('fromRcvSchDate', {static: false}) fromRcvSchDate: DxDateBoxComponent;
-  @ViewChild('toRcvSchDate', {static: false}) toRcvSchDate: DxDateBoxComponent;
-  @ViewChild('fromReceiveDate', {static: false}) fromReceiveDate: DxDateBoxComponent;
-  @ViewChild('toReceiveDate', {static: false}) toReceiveDate: DxDateBoxComponent;
-
-  dsActFlg = []; // 사용여부
-  dsDamageFlg = []; // 불량여부
-  dsRcvStatus = []; // 입고상태
-  dsRcvType = []; // 입고타입
-  dsCountry = []; // 국가
-  dsWarehouse = []; // 창고
-  dsPort = []; // 항구 필터
-  copyPort = []; // 전체 항구
-  dsOwner = []; // 화주
-  dsSupplier = []; // 공급처
-  dsAllSupplier = [];
-  dsItemAdmin = []; // 품목관리사
-  dsItemId = []; // 품목
-  dsUser = []; // 사용자
-  dsUnitStyle = []; // 단위유형
-  dsFilteredItemId = [];
-
-  // Global
-  G_TENANT: any;
-
-  mainFormData: RcvExpectedVO = {} as RcvExpectedVO;
-
-  // Grid Popup
-  popupVisible = false;
-  popupMode = 'Add';
-  popupData: RcvExpectedVO;
-
-  // grid
-  dataSource: DataSource;
-  popupDataSource: DataSource;
-  entityStore: ArrayStore;
-  popupEntityStore: ArrayStore;
-  selectedRows: number[];
-  deleteRowList = [];
-  changes = [];
-  key = 'uid';
-
-  // summary
-  searchList = [];
-
-  // Grid State
-  GRID_STATE_KEY = 'rcv_rcvexpected1';
-  loadStateMain = this.gridUtil.fnGridLoadState(this.GRID_STATE_KEY + '_main');
-  saveStateMain = this.gridUtil.fnGridSaveState(this.GRID_STATE_KEY + '_main');
-  loadStatePopup = this.gridUtil.fnGridLoadState(this.GRID_STATE_KEY + '_popup');
-  saveStatePopup = this.gridUtil.fnGridSaveState(this.GRID_STATE_KEY + '_popup');
-
-  supplierChangedFlg = true;  // 공급처 선택이벤트 활성화 여부
-  portChangedFlg = true;
 
   /**
    *  초기화 메소드 START
@@ -155,7 +145,7 @@ export class RcvexpectedComponent implements OnInit, AfterViewInit {
     });
 
     // 공급처(isSupplier is True)
-    this.codeService.getCompany(this.G_TENANT, null, true, true,  true, null, null, null).subscribe(result => {
+    this.codeService.getCompany(this.G_TENANT, null, true, true, true, null, null, null).subscribe(result => {
       this.dsAllSupplier = result.data;
     });
 
@@ -311,10 +301,11 @@ export class RcvexpectedComponent implements OnInit, AfterViewInit {
 
     if (data.isValid) {
 
-      this.mainFormData.fromRcvSchDate = document.getElementsByName('fromRcvSchDate').item(1).getAttribute('value');
-      this.mainFormData.toRcvSchDate = document.getElementsByName('toRcvSchDate').item(1).getAttribute('value');
-      this.mainFormData.fromReceiveDate = document.getElementsByName('fromReceiveDate').item(1).getAttribute('value');
-      this.mainFormData.toReceiveDate = document.getElementsByName('toReceiveDate').item(1).getAttribute('value');
+      console.log(this.mainFormData);
+      // this.mainFormData.fromRcvSchDate = document.getElementsByName('fromRcvSchDate').item(1).getAttribute('value');
+      // this.mainFormData.toRcvSchDate = document.getElementsByName('toRcvSchDate').item(1).getAttribute('value');
+      // this.mainFormData.fromReceiveDate = document.getElementsByName('fromReceiveDate').item(1).getAttribute('value');
+      // this.mainFormData.toReceiveDate = document.getElementsByName('toReceiveDate').item(1).getAttribute('value');
 
       const result = await this.service.get(this.mainFormData);
       this.searchList = result.data;
@@ -555,6 +546,7 @@ export class RcvexpectedComponent implements OnInit, AfterViewInit {
    *  팝업 메소드 START
    */
   showPopup(popupMode, data): void {
+    console.log(data)
     this.changes = [];  // 초기화
     this.popupEntityStore = new ArrayStore(
       {
@@ -610,6 +602,7 @@ export class RcvexpectedComponent implements OnInit, AfterViewInit {
       this.popupForm.instance.getEditor('actFlg').option('value', RcvCommonUtils.FLAG_TRUE);
       this.popupForm.instance.getEditor('sts').option('value', RcvCommonUtils.STS_IDLE);
       this.popupForm.instance.getEditor('rcvSchDate').option('value', this.gridUtil.getToday());
+      console.log(this.gridUtil.getToday());
       this.popupForm.instance.getEditor('rcvTypecd').option('value', RcvCommonUtils.TYPE_STD);
     } else if (this.popupMode === 'Edit') { // 수정
 
