@@ -1,13 +1,13 @@
-import {AfterViewInit, Component, OnInit, ViewChild} from '@angular/core';
+import { AfterViewInit, Component, OnInit, ViewChild } from '@angular/core';
 import ArrayStore from 'devextreme/data/array_store';
 import DataSource from 'devextreme/data/data_source';
-import {CommonUtilService} from '../../../shared/services/common-util.service';
-import {CommonCodeService} from '../../../shared/services/common-code.service';
-import {RcvexpectedService, RcvExpectedVO} from './rcvexpected.service';
-import {DxFormComponent} from 'devextreme-angular/ui/form';
-import {DxButtonComponent, DxDataGridComponent, DxDateBoxComponent, DxPopupComponent} from 'devextreme-angular';
-import {GridUtilService} from '../../../shared/services/grid-util.service';
-import {RcvCommonUtils} from '../rcvCommonUtils';
+import { CommonUtilService } from '../../../shared/services/common-util.service';
+import { CommonCodeService } from '../../../shared/services/common-code.service';
+import { RcvexpectedService, RcvExpectedVO } from './rcvexpected.service';
+import { DxFormComponent } from 'devextreme-angular/ui/form';
+import { DxButtonComponent, DxDataGridComponent, DxDateBoxComponent, DxPopupComponent } from 'devextreme-angular';
+import { GridUtilService } from '../../../shared/services/grid-util.service';
+import { RcvCommonUtils } from '../rcvCommonUtils';
 
 @Component({
   selector: 'app-rcvexpected',
@@ -16,18 +16,18 @@ import {RcvCommonUtils} from '../rcvCommonUtils';
 })
 export class RcvexpectedComponent implements OnInit, AfterViewInit {
 
-  @ViewChild('mainForm', {static: false}) mainForm: DxFormComponent;
-  @ViewChild('mainGrid', {static: false}) mainGrid: DxDataGridComponent;
-  @ViewChild('popupGrid', {static: false}) popupGrid: DxDataGridComponent;
-  @ViewChild('popupForm', {static: false}) popupForm: DxFormComponent;
-  @ViewChild('deleteBtn', {static: false}) deleteBtn: DxButtonComponent;
-  @ViewChild('saveBtn', {static: false}) saveBtn: DxButtonComponent;
-  @ViewChild('foldableBtn', {static: false}) foldableBtn: DxButtonComponent;
-  @ViewChild('popup', {static: false}) popup: DxPopupComponent;
-  @ViewChild('fromRcvSchDate', {static: false}) fromRcvSchDate: DxDateBoxComponent;
-  @ViewChild('toRcvSchDate', {static: false}) toRcvSchDate: DxDateBoxComponent;
-  @ViewChild('fromReceiveDate', {static: false}) fromReceiveDate: DxDateBoxComponent;
-  @ViewChild('toReceiveDate', {static: false}) toReceiveDate: DxDateBoxComponent;
+  @ViewChild('mainForm', { static: false }) mainForm: DxFormComponent;
+  @ViewChild('mainGrid', { static: false }) mainGrid: DxDataGridComponent;
+  @ViewChild('popupGrid', { static: false }) popupGrid: DxDataGridComponent;
+  @ViewChild('popupForm', { static: false }) popupForm: DxFormComponent;
+  @ViewChild('deleteBtn', { static: false }) deleteBtn: DxButtonComponent;
+  @ViewChild('saveBtn', { static: false }) saveBtn: DxButtonComponent;
+  @ViewChild('foldableBtn', { static: false }) foldableBtn: DxButtonComponent;
+  @ViewChild('popup', { static: false }) popup: DxPopupComponent;
+  @ViewChild('fromRcvSchDate', { static: false }) fromRcvSchDate: DxDateBoxComponent;
+  @ViewChild('toRcvSchDate', { static: false }) toRcvSchDate: DxDateBoxComponent;
+  @ViewChild('fromReceiveDate', { static: false }) fromReceiveDate: DxDateBoxComponent;
+  @ViewChild('toReceiveDate', { static: false }) toReceiveDate: DxDateBoxComponent;
   dsActFlg = []; // 사용여부
   dsDamageFlg = []; // 불량여부
   dsRcvStatus = []; // 입고상태
@@ -72,9 +72,9 @@ export class RcvexpectedComponent implements OnInit, AfterViewInit {
   portChangedFlg = true;
 
   constructor(public utilService: CommonUtilService,
-              private service: RcvexpectedService,
-              private codeService: CommonCodeService,
-              public gridUtil: GridUtilService) {
+    private service: RcvexpectedService,
+    private codeService: CommonCodeService,
+    public gridUtil: GridUtilService) {
     this.G_TENANT = this.utilService.getTenant();
 
     this.popupSaveClick = this.popupSaveClick.bind(this);
@@ -203,12 +203,12 @@ export class RcvexpectedComponent implements OnInit, AfterViewInit {
       } else if (changes[rowIndex].type === 'remove') {
         gridList.push(
           Object.assign(
-            {operType: changes[rowIndex].type, uid: changes[rowIndex].key}, changes[rowIndex].data)
+            { operType: changes[rowIndex].type, uid: changes[rowIndex].key }, changes[rowIndex].data)
         );
       } else {
         gridList.push(
           Object.assign(
-            {operType: changes[rowIndex].type, uid: changes[rowIndex].key}, changes[rowIndex].data
+            { operType: changes[rowIndex].type, uid: changes[rowIndex].key }, changes[rowIndex].data
           )
         );
       }
@@ -375,7 +375,7 @@ export class RcvexpectedComponent implements OnInit, AfterViewInit {
   // 신규버튼 이벤트
   async onNew(e): Promise<void> {
     this.deleteBtn.visible = false;
-    this.showPopup('Add', {...e.data});
+    this.showPopup('Add', { ...e.data });
   }
 
   // 저장버튼 이벤트
@@ -482,7 +482,7 @@ export class RcvexpectedComponent implements OnInit, AfterViewInit {
     this.supplierChangedFlg = false;
     this.portChangedFlg = false;
     // Row double 클릭시 이벤트에서 해당 Row에 대한 이벤트를 접근할 수 있다.
-    this.showPopup('Edit', {...e.data});
+    this.showPopup('Edit', { ...e.data });
   }
 
   // 그리드 셀 이동시 호출하는 함수
@@ -560,7 +560,7 @@ export class RcvexpectedComponent implements OnInit, AfterViewInit {
     });
 
     this.popupData = data;
-    this.popupData = {tenant: this.G_TENANT, ...this.popupData};
+    this.popupData = { tenant: this.G_TENANT, ...this.popupData };
     this.popupMode = popupMode;
     this.popupVisible = true;
     this.onSearchPopup();
@@ -706,7 +706,7 @@ export class RcvexpectedComponent implements OnInit, AfterViewInit {
       const focusedIdx = this.popupGrid.focusedRowIndex;
 
       this.popupGrid.instance.deleteRow(focusedIdx);
-      this.popupEntityStore.push([{type: 'remove', key: this.popupGrid.focusedRowKey}]);
+      this.popupEntityStore.push([{ type: 'remove', key: this.popupGrid.focusedRowKey }]);
 
       // 삭제된 로우 위로 포커스
       this.popupGrid.focusedRowIndex = focusedIdx - 1;

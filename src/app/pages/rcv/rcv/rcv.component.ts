@@ -74,6 +74,8 @@ export class RcvComponent implements OnInit, AfterViewInit {
     public gridUtil: GridUtilService,
     private service: RcvService,
   ) {
+    this.onSelectionChangedWarehouse = this.onSelectionChangedWarehouse.bind(this);
+    this.getFilteredItemId = this.getFilteredItemId.bind(this);
   }
 
   ngAfterViewInit(): void {
@@ -140,7 +142,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
       // sts: '100',
       fromRcvSchDate: rangeDate.fromDate,
       toRcvSchDate: rangeDate.toDate,
-      // warehouseId: this.utilService.getCommonWarehouseId(),
+      warehouseId: this.utilService.getCommonWarehouseId()
       // ownerId: this.utilService.getCommonOwnerId()
     };
   }
@@ -260,7 +262,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
     // this.onSelectionChangedCountry(null); // 조회시 필터 초기화
 
     // this.deleteBtn.visible = this.popupMode === 'Edit'; // 삭제버튼
-    // this.popupForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
+    this.popupForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
 
     // if (this.popupData.rcvTypecd === 'RETUN') {
     //   // 주문반품일 경우 거래처
@@ -282,6 +284,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
       this.popupForm.instance.getEditor('sts').option('value', RcvCommonUtils.STS_IDLE);
 
       this.popupForm.instance.getEditor('rcvTypecd').option('value', RcvCommonUtils.TYPE_STD);
+
     } else if (this.popupMode === 'Edit') { // 수정
 
     }
