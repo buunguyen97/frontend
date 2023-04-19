@@ -47,7 +47,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
   popupVisible = false;
   popupEntityStore: ArrayStore;
   popupMode = 'Add';
-  phong = [];
+  thien = [];
 
   @ViewChild('mainForm', { static: false }) mainForm: DxFormComponent;
   @ViewChild('mainGrid', { static: false }) mainGrid: DxDataGridComponent;
@@ -59,6 +59,8 @@ export class RcvComponent implements OnInit, AfterViewInit {
   @ViewChild('popup', { static: false }) popup: DxPopupComponent;
   @ViewChild('fromRcvSchDate', { static: false }) fromRcvSchDate: DxDateBoxComponent;
   @ViewChild('toRcvSchDate', { static: false }) toRcvSchDate: DxDateBoxComponent;
+  @ViewChild('fromReceiveDate', { static: false }) fromReceiveDate: DxDateBoxComponent;
+  @ViewChild('toReceiveDate', { static: false }) toReceiveDate: DxDateBoxComponent;
 
 
   GRID_STATE_KEY = 'rcv_rcv';
@@ -74,8 +76,18 @@ export class RcvComponent implements OnInit, AfterViewInit {
     public gridUtil: GridUtilService,
     private service: RcvService,
   ) {
+
+    this.popupSaveClick = this.popupSaveClick.bind(this);
+    this.popupCancelClick = this.popupCancelClick.bind(this);
+    this.popupDeleteClick = this.popupDeleteClick.bind(this);
     this.onSelectionChangedWarehouse = this.onSelectionChangedWarehouse.bind(this);
+    this.onChangeSupplier = this.onChangeSupplier.bind(this);
     this.getFilteredItemId = this.getFilteredItemId.bind(this);
+    this.setItemValue = this.setItemValue.bind(this);
+    this.onSelectionChangedCountry = this.onSelectionChangedCountry.bind(this);
+    this.isAllowEditing = this.isAllowEditing.bind(this);
+    // this.calculateCustomSummary = this.calculateCustomSummary.bind(this);
+    // this.popupShowing = this.popupShowing.bind(this);
   }
 
   ngAfterViewInit(): void {
@@ -88,8 +100,21 @@ export class RcvComponent implements OnInit, AfterViewInit {
   }
 
   initForm(): void {
+    // 공통 조회 조건 set
+    const rangeDate = this.utilService.getDateRange();
 
+    this.mainForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
+    this.mainForm.instance.getEditor('warehouseId').option('value', this.utilService.getCommonWarehouseId());
     this.mainForm.instance.getEditor('sts').option('value', RcvCommonUtils.STS_IDLE); // 예정
+    this.fromRcvSchDate.value = rangeDate.fromDate;
+    this.toRcvSchDate.value = rangeDate.toDate;
+    this.fromReceiveDate.value = '';
+    this.toReceiveDate.value = '';
+
+    // this.mainForm.instance.getEditor('fromRcvSchDate').option('value', fromDate);
+    // this.mainForm.instance.getEditor('toRcvSchDate').option('value', rangeDate.toDate);
+    this.mainForm.instance.focus();
+
   }
 
   ngOnInit(): void {
@@ -130,6 +155,15 @@ export class RcvComponent implements OnInit, AfterViewInit {
     this.codeService.getCodeOrderByCode(this.G_TENANT, 'COUNTRY').subscribe(result => {
       this.dsCountry = result.data;
     });
+    // 불량여부
+    this.codeService.getCode(this.G_TENANT, 'DAMAGEFLG').subscribe(result => {
+      this.dsDamageFlg = result.data;
+    });
+
+    this.codeService.getItem(this.G_TENANT).subscribe(result => {
+      this.dsItemId = result.data;
+      this.dsFilteredItemId = this.dsItemId.filter(el => el.itemAdminId === this.utilService.getCommonItemAdminId());
+    });
   }
 
   initData(form): void {
@@ -142,7 +176,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
       // sts: '100',
       fromRcvSchDate: rangeDate.fromDate,
       toRcvSchDate: rangeDate.toDate,
-      warehouseId: this.utilService.getCommonWarehouseId()
+      // warehouseId: this.utilService.getCommonWarehouseId(),
       // ownerId: this.utilService.getCommonOwnerId()
     };
   }
@@ -166,6 +200,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
   }
 
   setItemValue(rowData: any, value: any): void {
+    alert(1)
     rowData.itemId = value;
     rowData.isSerial = this.dsItemId.filter(el => el.uid === value)[0].isSerial;          // 시리얼여부
     rowData.unit = value;
@@ -184,7 +219,6 @@ export class RcvComponent implements OnInit, AfterViewInit {
 
   getFilteredItemId(options): any {
     const filtredRcvType = this.dsRcvType.filter(el => el.code === this.popupData.rcvTypecd);
-
     const filter = [];
     filter.push(['itemAdminId', '=', this.utilService.getCommonItemAdminId()]);
 
@@ -221,14 +255,12 @@ export class RcvComponent implements OnInit, AfterViewInit {
 
   async onSearch(): Promise<void> {
     const data = this.mainForm.instance.validate();
-    console.log(this.mainForm.formData);
 
     this.codeService.getCompany(this.G_TENANT, null, true, true, true, null, null, null).subscribe(result => {
       this.dsSupplier = result.data;
     });
 
     if (data.isValid) {
-      console.log(this.mainFormData);
 
       this.mainFormData.fromRcvSchDate = document.getElementsByName('fromRcvSchDate').item(1).getAttribute('value');
       this.mainFormData.toRcvSchDate = document.getElementsByName('toRcvSchDate').item(1).getAttribute('value');
@@ -264,55 +296,57 @@ export class RcvComponent implements OnInit, AfterViewInit {
     // this.deleteBtn.visible = this.popupMode === 'Edit'; // 삭제버튼
     this.popupForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
 
-    // if (this.popupData.rcvTypecd === 'RETUN') {
-    //   // 주문반품일 경우 거래처
-    //   this.codeService.getCompany(this.G_TENANT, null, true, true, null, null, null, null).subscribe(result => {
-    //     this.dsSupplier = result.data;
-    //   });
-    // } else {
-    //   // 거래처
-    //   this.codeService.getCompany(this.G_TENANT, null, null, null, true, null, null, null).subscribe(result => {
-    //     this.dsSupplier = result.data;
-    //   });
-    // }
-    console.log(this.gridUtil.getToday());
-    if (this.popupMode === 'Add') { // 신규
-      this.popupForm.instance.getEditor('rcvSchDate').option('value', this.gridUtil.getToday());
-      this.popupData.companyId = Number(this.utilService.getCompanyId());
-      this.popupForm.instance.getEditor('warehouseId').option('value', this.utilService.getCommonWarehouseId());
-      this.popupForm.instance.getEditor('actFlg').option('value', RcvCommonUtils.FLAG_TRUE);
-      this.popupForm.instance.getEditor('sts').option('value', RcvCommonUtils.STS_IDLE);
+    // không hiêủ
 
+    if (this.popupData.rcvTypecd === 'RETUN') {
+      // 주문반품일 경우 거래처
+      this.codeService.getCompany(this.G_TENANT, null, true, true, null, null, null, null).subscribe(result => {
+        this.dsSupplier = result.data;
+      });
+    } else {
+      // 거래처
+      this.codeService.getCompany(this.G_TENANT, null, null, null, true, null, null, null).subscribe(result => {
+        this.dsSupplier = result.data;
+      });
+    }
+
+    if (this.popupMode === 'Add') { // 신규
+      this.popupForm.instance.getEditor('warehouseId').option('value', this.utilService.getCommonWarehouseId());
+      this.popupForm.instance.getEditor('rcvSchDate').option('value', this.gridUtil.getToday());
+      this.popupForm.instance.getEditor('sts').option('value', RcvCommonUtils.STS_IDLE);
       this.popupForm.instance.getEditor('rcvTypecd').option('value', RcvCommonUtils.TYPE_STD);
+      this.popupForm.instance.getEditor('actFlg').option('value', RcvCommonUtils.FLAG_TRUE);
+      this.popupData.companyId = Number(this.utilService.getCompanyId());
+
 
     } else if (this.popupMode === 'Edit') { // 수정
 
     }
 
-    // const disabledCond = this.popupForm.instance.getEditor('sts').option('value') !== RcvCommonUtils.STS_IDLE || this.popupData.moveId != null;
-    //
-    // this.deleteBtn.visible = !disabledCond && this.popupMode === 'Edit';
-    // this.saveBtn.visible = !disabledCond;
-    // this.popupForm.instance.getEditor('supplierId').option('disabled', disabledCond);         // 예정일
-    // this.popupForm.instance.getEditor('actFlg').option('disabled', disabledCond);             // 사용여부
-    // this.popupForm.instance.getEditor('rcvTypecd').option('disabled', disabledCond);          // 입고타입
-    // this.popupForm.instance.getEditor('rcvSchDate').option('disabled', disabledCond);         // 예정일
-    //
-    // this.popupForm.instance.getEditor('supplierId').option('disabled', disabledCond);         // 공급처
-    // this.popupForm.instance.getEditor('refName').option('disabled', disabledCond);            // 담당자
-    // this.popupForm.instance.getEditor('supplierPhone').option('disabled', disabledCond);      // 연락처
-    // this.popupForm.instance.getEditor('supplierCountrycd').option('disabled', disabledCond);  // 국가
-    // this.popupForm.instance.getEditor('supplierPortcd').option('disabled', disabledCond);     // 항구
-    // this.popupForm.instance.getEditor('supplierZip').option('disabled', disabledCond);        // 우편번호
-    // this.popupForm.instance.getEditor('supplierAddress1').option('disabled', disabledCond);   // 주소1
-    // this.popupForm.instance.getEditor('supplierAddress2').option('disabled', disabledCond);   // 주소2
-    //
-    // this.popupForm.instance.getEditor('rcvTypecd').focus();
-    // this.supplierChangedFlg = true;
-    // this.portChangedFlg = true;
-    // this.popupGrid.instance.repaint();  // 스크롤 제거를 위해 refresh
-    // // 팝업 그리드 사이즈 조정
-    // this.utilService.setPopupGridHeight(this.popup, this.popupForm, this.popupGrid);
+    const disabledCond = this.popupForm.instance.getEditor('sts').option('value') !== RcvCommonUtils.STS_IDLE || this.popupData.moveId != null;
+    // không có hiểu
+    this.deleteBtn.visible = !disabledCond && this.popupMode === 'Edit';
+    this.saveBtn.visible = !disabledCond;
+    this.popupForm.instance.getEditor('supplierId').option('disabled', disabledCond);         // 예정일
+    this.popupForm.instance.getEditor('actFlg').option('disabled', disabledCond);             // 사용여부
+    this.popupForm.instance.getEditor('rcvTypecd').option('disabled', disabledCond);          // 입고타입
+    this.popupForm.instance.getEditor('rcvSchDate').option('disabled', disabledCond);         // 예정일
+
+    this.popupForm.instance.getEditor('supplierId').option('disabled', disabledCond);         // 공급처
+    this.popupForm.instance.getEditor('refName').option('disabled', disabledCond);            // 담당자
+    this.popupForm.instance.getEditor('supplierPhone').option('disabled', disabledCond);      // 연락처
+    this.popupForm.instance.getEditor('supplierCountrycd').option('disabled', disabledCond);  // 국가
+    this.popupForm.instance.getEditor('supplierPortcd').option('disabled', disabledCond);     // 항구
+    this.popupForm.instance.getEditor('supplierZip').option('disabled', disabledCond);        // 우편번호
+    this.popupForm.instance.getEditor('supplierAddress1').option('disabled', disabledCond);   // 주소1
+    this.popupForm.instance.getEditor('supplierAddress2').option('disabled', disabledCond);   // 주소2
+
+    this.popupForm.instance.getEditor('rcvTypecd').focus();
+    this.supplierChangedFlg = true;
+    this.portChangedFlg = true;
+    this.popupGrid.instance.repaint();  // 스크롤 제거를 위해 refresh
+    // 팝업 그리드 사이즈 조정
+    this.utilService.setPopupGridHeight(this.popup, this.popupForm, this.popupGrid);
 
   }
 
@@ -343,99 +377,125 @@ export class RcvComponent implements OnInit, AfterViewInit {
   // 저장버튼 이벤트
   async popupSaveClick(e): Promise<void> {
 
-    // const confirmMsg = this.utilService.convert('confirmSave', this.utilService.convert1('rcvTx', '입고전표'));
-    // if (!await this.utilService.confirm(confirmMsg)) {
-    //   return;
-    // }
-    //
-    // // 상품목록 추가여부
-    // if ((this.popupGrid.instance.totalCount() + this.changes.length) === 0) {
-    //   // '입고상품 목록을 추가하세요.'
-    //   const msg = this.utilService.convert('com_valid_required', this.utilService.convert('rcvExpect_popupGridTitle'));
-    //   this.utilService.notify_error(msg);
-    //   return;
-    // }
-    //
-    // // 선택한 화주를 품목에 세팅
-    // const items = this.popupDataSource.items() || [];
-    // const ownerId = this.popupForm.instance.getEditor('ownerId').option('value');
-    //
-    // for (const item of this.changes) {
-    //   if (item.type !== 'remove') {
-    //     item.data.ownerId = ownerId;
-    //   }
-    // }
-    //
-    // for (const item of items) {
-    //   const rowIdx = this.popupGrid.instance.getRowIndexByKey(item.uid);
-    //   this.popupGrid.instance.cellValue(rowIdx, 'ownerId', ownerId);
-    // }
-    //
-    // const messages = {
-    //   temAdminId: 'rcvDetail.itemAdminId',
-    //   itemId: 'rcvDetail.itemId',
-    //   expectQty1: 'rcvDetail.expectQty1',
-    //   whInDate: 'rcvDetail.whInDate'
-    // };
-    // const columns = ['itemAdminId', 'itemId', 'expectQty1', 'whInDate'];    // required 컬럼 dataField 정의
-    // const popData = this.popupForm.instance.validate();
-    // if (popData.isValid) {
-    //   try {
-    //     let result;
-    //     const saveContent = this.popupData as RcvExpectedVO;
-    //     const detailList = this.collectGridData(this.changes);
-    //
-    //     for (const detail of detailList) {
-    //       if (detail.expectQty1 <= 0) {
-    //         // '입고예정수량을 1개 이상 입력하세요.'
-    //         const msg = this.utilService.convert1('gt_expectQty', '입고예정수량을 1개 이상 입력하세요.');
-    //         this.utilService.notify_error(msg);
-    //         return;
-    //       }
-    //     }
-    //
-    //     for (const item of detailList) {
-    //       if (!item.key && !item.uid) {
-    //         for (const col of columns) {
-    //           if ((item[col] === undefined) || (item[col] === '')) {
-    //             this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert(messages[col])));
-    //             return;
-    //           }
-    //         }
-    //       }
-    //
-    //       this.popupGrid.instance.byKey(item.key).then(
-    //         (dataItem) => {
-    //           for (const col of columns) {
-    //             if ((dataItem[col] === undefined) || (dataItem[col] === '')) {
-    //               this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert(messages[col])));
-    //               return;
-    //             }
-    //           }
-    //         }
-    //       );
-    //     }
-    //
-    //     saveContent.rcvDetailList = detailList;
-    //
-    //     if (this.popupMode === 'Add') {
-    //       result = await this.service.save(saveContent);
-    //     } else {
-    //       result = await this.service.update(saveContent);
-    //     }
-    //     if (!result.success) {
-    //       this.utilService.notify_error(result.msg);
-    //       return;
-    //     } else {
-    //       this.utilService.notify_success('Save success');
-    //       this.popupForm.instance.resetValues();
-    //       this.popupVisible = false;
-    //       this.onSearch();
-    //     }
-    //   } catch {
-    //     this.utilService.notify_error('There was an error!');
-    //   }
-    // }
+    const confirmMsg = this.utilService.convert('confirmSave', this.utilService.convert1('rcvTx', '입고전표'));
+    if (!await this.utilService.confirm(confirmMsg)) {
+      return;
+    }
+
+    // 상품목록 추가여부
+    if ((this.popupGrid.instance.totalCount() + this.changes.length) === 0) {
+      // '입고상품 목록을 추가하세요.'
+      const msg = this.utilService.convert('com_valid_required', this.utilService.convert('rcvExpect_popupGridTitle'));
+      this.utilService.notify_error(msg);
+      return;
+    }
+
+    // 선택한 화주를 품목에 세팅
+    const items = this.popupDataSource.items() || [];
+    const ownerId = this.popupForm.instance.getEditor('ownerId').option('value');
+
+    for (const item of this.changes) {
+      if (item.type !== 'remove') {
+        item.data.ownerId = ownerId;
+      }
+    }
+
+    for (const item of items) {
+      const rowIdx = this.popupGrid.instance.getRowIndexByKey(item.uid);
+      this.popupGrid.instance.cellValue(rowIdx, 'ownerId', ownerId);
+    }
+
+    const messages = {
+      temAdminId: 'rcvDetail.itemAdminId',
+      itemId: 'rcvDetail.itemId',
+      expectQty1: 'rcvDetail.expectQty1',
+      whInDate: 'rcvDetail.whInDate'
+    };
+    const columns = ['itemAdminId', 'itemId', 'expectQty1', 'whInDate'];    // required 컬럼 dataField 정의
+    const popData = this.popupForm.instance.validate();
+    if (popData.isValid) {
+      try {
+        let result;
+        const saveContent = this.popupData as SearchVO;
+        const detailList = this.collectGridData(this.changes);
+
+        for (const detail of detailList) {
+          if (detail.expectQty1 <= 0) {
+            // '입고예정수량을 1개 이상 입력하세요.'
+            const msg = this.utilService.convert1('gt_expectQty', '입고예정수량을 1개 이상 입력하세요.');
+            this.utilService.notify_error(msg);
+            return;
+          }
+        }
+
+        for (const item of detailList) {
+          if (!item.key && !item.uid) {
+            for (const col of columns) {
+              if ((item[col] === undefined) || (item[col] === '')) {
+                this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert(messages[col])));
+                return;
+              }
+            }
+          }
+
+          this.popupGrid.instance.byKey(item.key).then(
+            (dataItem) => {
+              for (const col of columns) {
+                if ((dataItem[col] === undefined) || (dataItem[col] === '')) {
+                  this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert(messages[col])));
+                  return;
+                }
+              }
+            }
+          );
+        }
+
+        saveContent.rcvDetailList = detailList;
+
+        if (this.popupMode === 'Add') {
+          result = await this.service.save(saveContent);
+        } else {
+          result = await this.service.update(saveContent);
+        }
+        if (!result.success) {
+          this.utilService.notify_error(result.msg);
+          return;
+        } else {
+          this.utilService.notify_success('Save success');
+          this.popupForm.instance.resetValues();
+          this.popupVisible = false;
+          this.onSearch();
+        }
+      } catch {
+        this.utilService.notify_error('There was an error!');
+      }
+    }
+  }
+
+  collectGridData(changes: any): any[] {
+    const gridList = [];
+    for (const rowIndex in changes) {
+      // Insert일 경우 UUID가 들어가 있기 때문에 Null로 매핑한다.
+      if (changes[rowIndex].type === 'insert') {
+        gridList.push(Object.assign({
+          operType: changes[rowIndex].type,
+          uid: null,
+          tenant: this.G_TENANT
+        }, changes[rowIndex].data));
+      } else if (changes[rowIndex].type === 'remove') {
+        gridList.push(
+          Object.assign(
+            { operType: changes[rowIndex].type, uid: changes[rowIndex].key }, changes[rowIndex].data)
+        );
+      } else {
+        gridList.push(
+          Object.assign(
+            { operType: changes[rowIndex].type, uid: changes[rowIndex].key }, changes[rowIndex].data
+          )
+        );
+      }
+    }
+    return gridList;
   }
 
   // 그리드 더블클릭시 호출하는 함수
@@ -535,7 +595,6 @@ export class RcvComponent implements OnInit, AfterViewInit {
   }
 
   onInitNewRow(e): void {
-    console.log(e.data);
     // e.data.itemAdminId = this.dsItemAdmin.length > 0 ? this.dsItemAdmin[0].uid : null;
     e.data.itemAdminId = this.utilService.getCommonItemAdminId();
     e.data.damageFlg = RcvCommonUtils.FLAG_FALSE;

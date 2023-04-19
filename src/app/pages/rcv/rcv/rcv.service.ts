@@ -1,8 +1,8 @@
-import {Injectable} from '@angular/core';
-import {APPCONSTANTS} from '../../../shared/constants/appconstants';
-import {JHttpService} from '../../../shared/services/jhttp.service';
-import {ApiResult} from '../../../shared/vo/api-result';
-import {RcvDetailVO, RcvExpectedVO} from '../rcvexpected/rcvexpected.service';
+import { Injectable } from '@angular/core';
+import { APPCONSTANTS } from '../../../shared/constants/appconstants';
+import { JHttpService } from '../../../shared/services/jhttp.service';
+import { ApiResult } from '../../../shared/vo/api-result';
+import { RcvDetailVO, RcvExpectedVO } from '../rcvexpected/rcvexpected.service';
 
 @Injectable({
   providedIn: 'root'
@@ -22,6 +22,58 @@ export class RcvService {
     try {
       // Post 방식으로 조회
       const result = await this.http.post<ApiResult<RcvExpectedVO[]>>(baseUrl, searchData).toPromise();
+      return result;
+    } catch (e) {
+      return {
+        success: false,
+        data: null,
+        code: e.code,
+        msg: e.msg
+      };
+    }
+  }
+  async save(data: {}): Promise<ApiResult<RcvExpectedVO[]>> {
+    // 조회 Api 설정
+    const baseUrl = `${this.httpUrl}/saveRcvExpected`;
+
+    try {
+      // Post 방식으로 조회
+      const result = await this.http.post<ApiResult<RcvExpectedVO[]>>(baseUrl, data).toPromise();
+      return result;
+    } catch (e) {
+      return {
+        success: false,
+        data: null,
+        code: e.code,
+        msg: e.msg
+      };
+    }
+  }
+  async update(data: {}): Promise<ApiResult<RcvExpectedVO[]>> {
+    // 조회 Api 설정
+    const baseUrl = `${this.httpUrl}/updateRcvExpected`;
+
+    try {
+      // Post 방식으로 조회
+      const result = await this.http.post<ApiResult<RcvExpectedVO[]>>(baseUrl, data).toPromise();
+      return result;
+    } catch (e) {
+      return {
+        success: false,
+        data: null,
+        code: e.code,
+        msg: e.msg
+      };
+    }
+  }
+
+  async delete(data: RcvExpectedVO): Promise<ApiResult<void>> {
+    // 조회 Api 설정
+    const baseUrl = `${this.httpUrl}/deleteRcvExpected`;
+
+    try {
+      // Post 방식으로 조회
+      const result = await this.http.post<ApiResult<void>>(baseUrl, data).toPromise();
       return result;
     } catch (e) {
       return {
