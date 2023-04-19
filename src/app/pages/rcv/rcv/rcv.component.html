@@ -318,7 +318,10 @@
         <dxi-item [colSpan]="2" [disabled]="true"
                   [label]="{text: utilService.convert('rcv.acceptKey', '입고접수번호', 'Accept Key')}"
                   dataField="acceptKey"></dxi-item>
-        <dxi-item [colSpan]="2" [disabled]="true" [editorOptions]="{
+
+        <dxi-item dataField="sts" [label]="{text: utilService.convert('rcv.sts')}" [disabled]="true"
+                  editorType="dxSelectBox" [colSpan]="2"
+                  [editorOptions]="{
                                       items: dsRcvStatus,
                                       displayExpr: 'display',
                                       valueExpr: 'code',
@@ -330,13 +333,13 @@
                                       placeholder: '',
                                       noDataText: utilService.convert('com_txt_noDataText')
                                       }"
-                  [label]="{text: utilService.convert('rcv.sts')}" dataField="sts"
-                  editorType="dxSelectBox"
         >
-          <dxi-validation-rule [message]="utilService.convert('com_valid_required', utilService.convert('rcv.sts'))"
-                               type="required"></dxi-validation-rule>
+          <dxi-validation-rule type="required"
+                               [message]="utilService.convert('com_valid_required', utilService.convert('rcv.sts'))"></dxi-validation-rule>
         </dxi-item>
-        <dxi-item [colSpan]="2" [editorOptions]="{
+        <dxi-item dataField="rcvTypecd" [label]="{text: utilService.convert('rcv.rcvTypecd')}"
+                  editorType="dxSelectBox" [colSpan]="2"
+                  [editorOptions]="{
                                       items: dsRcvType,
                                       displayExpr: 'display',
                                       valueExpr: 'code',
@@ -348,12 +351,9 @@
                                       placeholder: '',
                                       noDataText: utilService.convert('com_txt_noDataText')
                                       }"
-                  [label]="{text: utilService.convert('rcv.rcvTypecd')}" dataField="rcvTypecd"
-                  editorType="dxSelectBox"
         >
-          <dxi-validation-rule
-            [message]="utilService.convert('com_valid_required', utilService.convert('rcv.rcvTypecd'))"
-            type="required"></dxi-validation-rule>
+          <dxi-validation-rule type="required"
+                               [message]="utilService.convert('com_valid_required', utilService.convert('rcv.rcvTypecd'))"></dxi-validation-rule>
         </dxi-item>
 
         <dxi-item [colSpan]="2"
