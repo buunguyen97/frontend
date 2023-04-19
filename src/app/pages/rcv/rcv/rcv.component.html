@@ -318,7 +318,7 @@
         <dxi-item [colSpan]="2" [disabled]="true"
                   [label]="{text: utilService.convert('rcv.acceptKey', '입고접수번호', 'Accept Key')}"
                   dataField="acceptKey"></dxi-item>
-        <dxi-item [colSpan]="2" [disabled]="false" [editorOptions]="{
+        <dxi-item [colSpan]="2" [disabled]="true" [editorOptions]="{
                                       items: dsRcvStatus,
                                       displayExpr: 'display',
                                       valueExpr: 'code',
@@ -382,7 +382,8 @@
                                       placeholder: '',
                                       noDataText: utilService.convert('com_txt_noDataText'),
                                       onValueChanged: onSelectionChangedWarehouse
-                                      }" [label]="{text: utilService.convert1('rcv.warehouseId', '창고', 'Warehouse')}"
+                                      }"
+                  [label]="{text: utilService.convert1('rcv.warehouseId', '창고', 'Warehouse')}"
                   dataField="warehouseId"
                   editorType="dxSelectBox"
         >
