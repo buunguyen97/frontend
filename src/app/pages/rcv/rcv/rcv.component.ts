@@ -47,6 +47,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
   popupVisible = false;
   popupEntityStore: ArrayStore;
   popupMode = 'Add';
+  searchList = [];
   thien = [];
 
   @ViewChild('mainForm', {static: false}) mainForm: DxFormComponent;
@@ -103,7 +104,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
     this.utilService.getFoldable(this.mainForm, this.foldableBtn);
     this.utilService.getGridHeight(this.mainGrid);
     this.initForm();
-    // this.initData(this.mainForm);
+    this.initData(this.mainForm);
   }
 
   initForm(): void {
@@ -122,6 +123,8 @@ export class RcvComponent implements OnInit, AfterViewInit {
      // this.mainForm.instance.getEditor('toRcvSchDate').option('value', rangeDate.toDate);
      this.mainForm.instance.focus();
 
+  }onOptionChanged(e): void {
+    this.gridUtil.onOptionChangedForSummary(e, this); // 합계 계산
   }
 
   ngOnInit(): void {
@@ -276,6 +279,8 @@ export class RcvComponent implements OnInit, AfterViewInit {
       this.mainFormData.toReceiveDate = document.getElementsByName('toReceiveDate').item(1).getAttribute('value');
 
       const result = await this.service.get(this.mainFormData);
+      this.searchList = result.data;
+
       if (!result.success) {
         this.utilService.notify_error(result.msg);
         return;

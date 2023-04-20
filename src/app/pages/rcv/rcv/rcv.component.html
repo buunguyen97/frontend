@@ -193,6 +193,7 @@
                     [dataSource]="dataSource"
                     [focusedRowEnabled]="true"
                     [rowAlternationEnabled]="true"
+                    (onOptionChanged)="onOptionChanged($event)"
                     [showRowLines]="true"
                     columnResizingMode=nextColumn
       >

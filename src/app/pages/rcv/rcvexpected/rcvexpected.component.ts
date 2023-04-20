@@ -531,7 +531,7 @@ export class RcvexpectedComponent implements OnInit, AfterViewInit {
   }
 
   onOptionChanged(e): void {
-    this.gridUtil.onOptionChangedForSummary(e, this); // 합계 계산
+    // this.gridUtil.onOptionChangedForSummary(e, this); // 합계 계산
   }
 
   calculateCustomSummary(options): void {

@@ -85,7 +85,7 @@ export class RcvService {
       };
     }
   }
-  async getRcvFull(searchData: {}): Promise<ApiResult<SearchVO>> {
+   async getRcvFull(searchData: {}): Promise<ApiResult<SearchVO>> {
     // 조회 Api 설정
     const baseUrl = `${this.httpUrl}/findRcvFull`;
 
