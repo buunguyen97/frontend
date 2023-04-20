@@ -104,7 +104,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
     this.utilService.getFoldable(this.mainForm, this.foldableBtn);
     this.utilService.getGridHeight(this.mainGrid);
     this.initForm();
-    this.initData(this.mainForm);
+    // this.initData(this.mainForm);
   }
 
   initForm(): void {
@@ -123,8 +123,6 @@ export class RcvComponent implements OnInit, AfterViewInit {
      // this.mainForm.instance.getEditor('toRcvSchDate').option('value', rangeDate.toDate);
      this.mainForm.instance.focus();
 
-  }onOptionChanged(e): void {
-    this.gridUtil.onOptionChangedForSummary(e, this); // 합계 계산
   }
 
   ngOnInit(): void {
@@ -214,6 +212,10 @@ export class RcvComponent implements OnInit, AfterViewInit {
     rowData.itemId = value;
     rowData.isSerial = this.dsItemId.filter(el => el.uid === value)[0].isSerial;          // 시리얼여부
     rowData.unit = value;
+  }
+
+  onOptionChanged(e): void {
+    this.gridUtil.onOptionChangedForSummary(e, this); // 합계 계산
   }
 
   onSelectionChangedCountry(e): void {
