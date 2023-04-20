@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { APPCONSTANTS } from '../../../shared/constants/appconstants';
 import { JHttpService } from '../../../shared/services/jhttp.service';
 import { ApiResult } from '../../../shared/vo/api-result';
-import { RcvDetailVO, RcvExpectedVO } from '../rcvexpected/rcvexpected.service';
+import { RcvDetailVO } from '../rcvexpected/rcvexpected.service';
 
 @Injectable({
   providedIn: 'root'
@@ -16,12 +16,12 @@ export class RcvService {
   constructor(private http: JHttpService) {
   }
 
-  async get(searchData: {}): Promise<ApiResult<RcvExpectedVO[]>> {
+  async get(searchData: {}): Promise<ApiResult<SearchVO[]>> {
     // 조회 Api 설정
     const baseUrl = `${this.httpUrl}/findRcvExpected`;
     try {
       // Post 방식으로 조회
-      const result = await this.http.post<ApiResult<RcvExpectedVO[]>>(baseUrl, searchData).toPromise();
+      const result = await this.http.post<ApiResult<SearchVO[]>>(baseUrl, searchData).toPromise();
       return result;
     } catch (e) {
       return {
@@ -32,13 +32,13 @@ export class RcvService {
       };
     }
   }
-  async save(data: {}): Promise<ApiResult<RcvExpectedVO[]>> {
+  async save(data: {}): Promise<ApiResult<SearchVO[]>> {
     // 조회 Api 설정
     const baseUrl = `${this.httpUrl}/saveRcvExpected`;
 
     try {
       // Post 방식으로 조회
-      const result = await this.http.post<ApiResult<RcvExpectedVO[]>>(baseUrl, data).toPromise();
+      const result = await this.http.post<ApiResult<SearchVO[]>>(baseUrl, data).toPromise();
       return result;
     } catch (e) {
       return {
@@ -49,13 +49,13 @@ export class RcvService {
       };
     }
   }
-  async update(data: {}): Promise<ApiResult<RcvExpectedVO[]>> {
+  async update(data: {}): Promise<ApiResult<SearchVO[]>> {
     // 조회 Api 설정
     const baseUrl = `${this.httpUrl}/updateRcvExpected`;
 
     try {
       // Post 방식으로 조회
-      const result = await this.http.post<ApiResult<RcvExpectedVO[]>>(baseUrl, data).toPromise();
+      const result = await this.http.post<ApiResult<SearchVO[]>>(baseUrl, data).toPromise();
       return result;
     } catch (e) {
       return {
@@ -67,7 +67,7 @@ export class RcvService {
     }
   }
 
-  async delete(data: RcvExpectedVO): Promise<ApiResult<void>> {
+  async delete(data: SearchVO): Promise<ApiResult<void>> {
     // 조회 Api 설정
     const baseUrl = `${this.httpUrl}/deleteRcvExpected`;
 

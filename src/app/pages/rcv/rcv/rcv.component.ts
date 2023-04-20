@@ -96,7 +96,6 @@ export class RcvComponent implements OnInit, AfterViewInit {
     this.utilService.getFoldable(this.mainForm, this.foldableBtn);
     this.utilService.getGridHeight(this.mainGrid);
     this.initForm();
-    this.initData(this.mainForm);
   }
 
   initForm(): void {
@@ -351,44 +350,41 @@ export class RcvComponent implements OnInit, AfterViewInit {
   }
 
   async popupDeleteClick(e): Promise<void> {
-    //
-    // const confirmMsg = this.utilService.convert('confirmDelete', this.utilService.convert1('rcvTx', '입고전표'));
-    // if (!await this.utilService.confirm(confirmMsg)) {
-    //   return;
-    // }
-    //
-    // try {
-    //   const deleteContent = this.popupData as RcvExpectedVO;
-    //   const result = await this.service.delete(deleteContent);
-    //   if (!result.success) {
-    //     this.utilService.notify_error(result.msg);
-    //     return;
-    //   } else {
-    //     this.utilService.notify_success('Delete success');
-    //     this.popupForm.instance.resetValues();
-    //     this.popupVisible = false;
-    //     this.onSearch();
-    //   }
-    // } catch {
-    //   this.utilService.notify_error('There was an error!');
-    // }
+    const confirmMsg = this.utilService.convert('confirmDelete', this.utilService.convert1('rcvTx', '입고전표'));
+    if (!await this.utilService.confirm(confirmMsg)) {
+      return;
+    }
+    try {
+      const deleteContent = this.popupData as SearchVO;
+      const result = await this.service.delete(deleteContent);
+      if (!result.success) {
+        this.utilService.notify_error(result.msg);
+        return;
+      } else {
+        this.utilService.notify_success('Delete success');
+        this.popupForm.instance.resetValues();
+        this.popupVisible = false;
+        this.onSearch();
+      }
+    } catch {
+      this.utilService.notify_error('There was an error!');
+    }
   }
 
   // 저장버튼 이벤트
   async popupSaveClick(e): Promise<void> {
+    // const confirmMsg = this.utilService.convert('confirmSave', this.utilService.convert1('rcvTx', '입고전표'));
+    // if (!await this.utilService.confirm(confirmMsg)) {
+    //   return;
+    // }
 
-    const confirmMsg = this.utilService.convert('confirmSave', this.utilService.convert1('rcvTx', '입고전표'));
-    if (!await this.utilService.confirm(confirmMsg)) {
-      return;
-    }
-
-    // 상품목록 추가여부
-    if ((this.popupGrid.instance.totalCount() + this.changes.length) === 0) {
-      // '입고상품 목록을 추가하세요.'
-      const msg = this.utilService.convert('com_valid_required', this.utilService.convert('rcvExpect_popupGridTitle'));
-      this.utilService.notify_error(msg);
-      return;
-    }
+    // // 상품목록 추가여부
+    // if ((this.popupGrid.instance.totalCount() + this.changes.length) === 0) {
+    //   // '입고상품 목록을 추가하세요.'
+    //   const msg = this.utilService.convert('com_valid_required', this.utilService.convert('rcvExpect_popupGridTitle'));
+    //   this.utilService.notify_error(msg);
+    //   return;
+    // }
 
     // 선택한 화주를 품목에 세팅
     const items = this.popupDataSource.items() || [];
@@ -413,63 +409,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
     };
     const columns = ['itemAdminId', 'itemId', 'expectQty1', 'whInDate'];    // required 컬럼 dataField 정의
     const popData = this.popupForm.instance.validate();
-    if (popData.isValid) {
-      try {
-        let result;
-        const saveContent = this.popupData as SearchVO;
-        const detailList = this.collectGridData(this.changes);
-
-        for (const detail of detailList) {
-          if (detail.expectQty1 <= 0) {
-            // '입고예정수량을 1개 이상 입력하세요.'
-            const msg = this.utilService.convert1('gt_expectQty', '입고예정수량을 1개 이상 입력하세요.');
-            this.utilService.notify_error(msg);
-            return;
-          }
-        }
-
-        for (const item of detailList) {
-          if (!item.key && !item.uid) {
-            for (const col of columns) {
-              if ((item[col] === undefined) || (item[col] === '')) {
-                this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert(messages[col])));
-                return;
-              }
-            }
-          }
-
-          this.popupGrid.instance.byKey(item.key).then(
-            (dataItem) => {
-              for (const col of columns) {
-                if ((dataItem[col] === undefined) || (dataItem[col] === '')) {
-                  this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert(messages[col])));
-                  return;
-                }
-              }
-            }
-          );
-        }
-
-        saveContent.rcvDetailList = detailList;
-
-        if (this.popupMode === 'Add') {
-          result = await this.service.save(saveContent);
-        } else {
-          result = await this.service.update(saveContent);
-        }
-        if (!result.success) {
-          this.utilService.notify_error(result.msg);
-          return;
-        } else {
-          this.utilService.notify_success('Save success');
-          this.popupForm.instance.resetValues();
-          this.popupVisible = false;
-          this.onSearch();
-        }
-      } catch {
-        this.utilService.notify_error('There was an error!');
-      }
-    }
+    console.log(popData)
   }
 
   collectGridData(changes: any): any[] {
@@ -500,11 +440,11 @@ export class RcvComponent implements OnInit, AfterViewInit {
 
   // 그리드 더블클릭시 호출하는 함수
   rowDblClick(e): void {
-    // this.deleteBtn.visible = true;
-    // this.supplierChangedFlg = false;
-    // this.portChangedFlg = false;
-    // // Row double 클릭시 이벤트에서 해당 Row에 대한 이벤트를 접근할 수 있다.
-    // this.showPopup('Edit', {...e.data});
+    this.deleteBtn.visible = true;
+    this.supplierChangedFlg = false;
+    this.portChangedFlg = false;
+    // Row double 클릭시 이벤트에서 해당 Row에 대한 이벤트를 접근할 수 있다.
+    this.showPopup('Edit', { ...e.data });
   }
 
   async onNew(e): Promise<void> {
@@ -596,6 +536,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
 
   onInitNewRow(e): void {
     // e.data.itemAdminId = this.dsItemAdmin.length > 0 ? this.dsItemAdmin[0].uid : null;
+
     e.data.itemAdminId = this.utilService.getCommonItemAdminId();
     e.data.damageFlg = RcvCommonUtils.FLAG_FALSE;
     e.data.noShippingFlg = RcvCommonUtils.FLAG_FALSE;
