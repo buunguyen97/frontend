@@ -104,7 +104,6 @@ export class RcvComponent implements OnInit, AfterViewInit {
     this.utilService.getFoldable(this.mainForm, this.foldableBtn);
     this.utilService.getGridHeight(this.mainGrid);
     this.initForm();
-    // this.initData(this.mainForm);
   }
 
   initForm(): void {
@@ -262,8 +261,9 @@ export class RcvComponent implements OnInit, AfterViewInit {
   }
 
   // tslint:disable-next-line:typedef
-  onReset() {
-
+  async onReset(): Promise<void>  {
+    await this.mainForm.instance.resetValues();
+    await this.initForm();
   }
 
   async onSearch(): Promise<void> {
@@ -553,11 +553,6 @@ export class RcvComponent implements OnInit, AfterViewInit {
     if (this.popupData.uid) {
       // Service의 get 함수 생성
       const result = await this.service.getRcvFull(this.popupData);
-
-      // for (const r of result.data.rcvDetailList) {
-      //   const item = this.dsItemId.filter(el => el.uid === r.itemId);
-      //   r.unit3Stylecd = item.length > 0 ? item[0].unit3Stylecd : null;
-      // }
       if (!result.success) {
         this.utilService.notify_error(result.msg);
         return;

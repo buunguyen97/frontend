@@ -28,6 +28,7 @@ import {RcvInspectComponent} from './rcv-inspect/rcv-inspect.component';
 import {NgxQRCodeModule} from '@techiediaries/ngx-qrcode';
 import { RcvinstructReportComponent } from './rcvinstruct-report/rcvinstruct-report.component';
 import { RcvComponent } from './rcv/rcv.component';
+import { Rcv1Component } from './rcv1/rcv1.component';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { RcvComponent } from './rcv/rcv.component';
     RcvProduceStatusComponent,
     RcvInspectComponent,
     RcvinstructReportComponent,
-    RcvComponent
+    RcvComponent,
+    Rcv1Component
   ],
   imports: [
     CommonModule,
