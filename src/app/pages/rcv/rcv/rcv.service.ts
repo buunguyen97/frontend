@@ -16,12 +16,12 @@ export class RcvService {
   constructor(private http: JHttpService) {
   }
 
-  async get(searchData: {}): Promise<ApiResult<RcvExpectedVO[]>> {
+  async get(searchData: {}): Promise<ApiResult<SearchVO[]>> {
     // 조회 Api 설정
     const baseUrl = `${this.httpUrl}/findRcvExpected`;
     try {
       // Post 방식으로 조회
-      const result = await this.http.post<ApiResult<RcvExpectedVO[]>>(baseUrl, searchData).toPromise();
+      const result = await this.http.post<ApiResult<SearchVO[]>>(baseUrl, searchData).toPromise();
       return result;
     } catch (e) {
       return {
@@ -58,6 +58,40 @@ export class RcvService {
     try {
       // Post 방식으로 조회
       const result = await this.http.post<ApiResult<SearchVO[]>>(baseUrl, data).toPromise();
+      return result;
+    } catch (e) {
+      return {
+        success: false,
+        data: null,
+        code: e.code,
+        msg: e.msg
+      };
+    }
+  }
+  async delete(data: SearchVO): Promise<ApiResult<void>> {
+    // 조회 Api 설정
+    const baseUrl = `${this.httpUrl}/deleteRcvExpected`;
+
+    try {
+      // Post 방식으로 조회
+      const result = await this.http.post<ApiResult<void>>(baseUrl, data).toPromise();
+      return result;
+    } catch (e) {
+      return {
+        success: false,
+        data: null,
+        code: e.code,
+        msg: e.msg
+      };
+    }
+  }
+  async getRcvFull(searchData: {}): Promise<ApiResult<SearchVO>> {
+    // 조회 Api 설정
+    const baseUrl = `${this.httpUrl}/findRcvFull`;
+
+    try {
+      // Post 방식으로 조회
+      const result = await this.http.post<ApiResult<SearchVO>>(baseUrl, searchData).toPromise();
       return result;
     } catch (e) {
       return {

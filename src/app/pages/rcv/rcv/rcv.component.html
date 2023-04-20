@@ -40,10 +40,10 @@
                          name="fromRcvSchDate"
                          pickerType="calendar"
                          type="date"
-                         width="45%"
+                         width="47%"
             >
             </dx-date-box>
-            <div style="float:left;margin:5px">~</div>
+            <div style="float:left;margin:5px 7px 5px 7px">~</div>
             <dx-date-box #toRcvSchDate
                          [calendarOptions]="{useMaskBehavior:'true'}"
                          [elementAttr]="{ style: 'float:left' }"
@@ -52,7 +52,7 @@
                          name="toRcvSchDate"
                          pickerType="calendar"
                          type="date"
-                         width="45%"
+                         width="47%"
             >
             </dx-date-box>
           </dxi-item>
@@ -66,10 +66,10 @@
                          name="fromReceiveDate"
                          pickerType="calendar"
                          type="date"
-                         width="45%"
+                         width="47%"
             >
             </dx-date-box>
-            <div style="float:left;margin:5px">~</div>
+            <div style="float:left;margin:5px 7px 5px 7px">~</div>
             <dx-date-box #toReceiveDate
                          [calendarOptions]="{useMaskBehavior:'true'}"
                          [elementAttr]="{ style: 'float:left' }"
@@ -78,25 +78,23 @@
                          name="toReceiveDate"
                          pickerType="calendar"
                          type="date"
-                         width="45%"
+                         width="47%"
             >
             </dx-date-box>
           </dxi-item>
-          <dxi-item [colSpan]="2" [editorOptions]="{  items: dsRcvStatus,
-                                            displayExpr: 'display',
-                                            valueExpr: 'code',
-                                            searchMode:'contains',
-                                            searchEnabled: true,
-                                            showClearButton: true,
-                                            openOnFieldClick: false,
-                                            minSearchLength: 0,
-                                            placeholder: '',
-                                            noDataText: utilService.convert('com_txt_noDataText')
-                                         }"
-                    [label]="{text: utilService.convert1('rcv.sts', '입고상태')}"
-                    dataField="sts"
-                    editorType="dxSelectBox">
-          </dxi-item>
+          <dxi-item dataField="sts" [label]="{text: utilService.convert1('rcv.sts', '입고상태', 'Receive Status')}"
+                    editorType="dxSelectBox" [colSpan]="2" [editorOptions]="{
+                                      items: dsRcvStatus,
+                                      displayExpr: 'display',
+                                      valueExpr: 'code',
+                                      searchMode:'contains',
+                                      searchEnabled: true,
+                                      showClearButton: true,
+                                      openOnFieldClick: false,
+                                      minSearchLength: 0,
+                                      placeholder: '',
+                                      noDataText: utilService.convert('com_txt_noDataText')
+                                      }"></dxi-item>
           <dxi-item [colSpan]="2" [editorOptions]="{  items: dsRcvType,
                                             displayExpr: 'display',
                                             valueExpr: 'uid',
@@ -163,14 +161,14 @@
         <dx-button (onClick)="onReset()"
                    [text]="utilService.convert('com_btn_reset')"
                    class="reset-btn"
-                   icon="check"
+                   icon="refresh"
                    type="default">
         </dx-button>
         <dx-button (onClick)="onSearch()"
                    [focusStateEnabled]="false"
                    [text]="utilService.convert('com_btn_search')"
                    class="search-btn"
-                   icon="check"
+                   icon="search"
                    type="default">
         </dx-button>
       </div>
@@ -188,7 +186,7 @@
       <dx-data-grid #mainGrid
                     (onExporting)="gridUtil.onPageExportXlsx($event)"
                     (onToolbarPreparing)="gridUtil.onToolbarPreparing($event)"
-
+                    (onRowDblClick)="rowDblClick($event)"
                     [allowColumnReordering]="true"
                     [allowColumnResizing]="true"
                     [columnAutoWidth]="true"
@@ -224,20 +222,32 @@
         <!-- Columns -->
         <dxi-column [allowEditing]="false" [allowSearch]="false" [showInColumnChooser]="false" [visible]="false"
                     caption="UID"
-                    dataField="uid"></dxi-column>
+                    dataField="uid">
+        </dxi-column>
         <!-- rcvkey-->
-        <dxi-column [caption]="utilService.convert1('rcv.rcvKey', '입고번호')" alignment="center" dataField="rcvKey"
-        ></dxi-column>
-        <!--        sts-->
+        <dxi-column [caption]="utilService.convert1('rcv.rcvKey', '입고번호')" alignment="center" dataField="rcvKey"></dxi-column>
+        <!--sts-->
         <dxi-column [caption]="utilService.convert1('rcv.sts', '상태')" alignment="center" dataField="sts">
           <dxo-lookup [dataSource]=dsRcvStatus displayExpr="display" valueExpr="code"></dxo-lookup>
         </dxi-column>
-
+        <!-- acceptKey -->
+        <dxi-column dataField="acceptKey" [caption]="utilService.convert1('rcv.acceptKey', '입고접수번호', 'Accept Key')"
+                    alignment="center">
+        </dxi-column>
+        <!-- rcvTyped -->
+        <dxi-column dataField="rcvTypecd" [caption]="utilService.convert1('rcv.rcvTypecd', '입고타입', 'Receive Type')"
+                    alignment="center">
+          <dxo-lookup [dataSource]=dsRcvType displayExpr="display" valueExpr="code"></dxo-lookup>
+        </dxi-column>
         <!--        rcvSchDate-->
         <dxi-column [caption]="utilService.convert1('rcv.rcvSchDate', '입고예정일')" alignment="center"
                     dataField="rcvSchDate">
         </dxi-column>
-
+        <!-- receiveDate -->
+        <dxi-column dataField="receiveDate"
+                    [caption]="utilService.convert1('rcv.receiveDate', '입고실적일자', 'Receive Date')"
+                    alignment="center">
+        </dxi-column>
         <!--        dsSupplier-->
         <dxi-column [caption]="utilService.convert1('rcv.supplierId', '거래처')" alignment="center" dataField="supplierId">
           <dxo-lookup [dataSource]=dsSupplier displayExpr="display" valueExpr="uid"></dxo-lookup>
@@ -246,9 +256,50 @@
         <dxi-column [caption]="utilService.convert1('rcv.rcvSumItemCount', '총품목수')" alignment="center"
                     dataField="rcvSumItemCount"
         ></dxi-column>
-        <!-- 전표비고-->
-        <dxi-column [caption]="utilService.convert1('rcv.remarks', '전표비고')" alignment="center" dataField="remarks"
-        ></dxi-column>
+        <!-- rcvSumQty1 -->
+        <dxi-column dataField="rcvSumQty1"
+                    [caption]="utilService.convert1('rcv.rcvSumQty1', '총품목수량', 'Item Total Quantity')"
+                    format="#,##0.####">
+        </dxi-column>
+        <!-- actFlg -->
+        <dxi-column dataField="actFlg" [caption]="utilService.convert1('rcv.actFlg', '사용여부', 'Active Flag')"
+                    alignment="center">
+          <dxo-lookup [dataSource]=dsActFlg displayExpr="codeName" valueExpr="code"></dxo-lookup>
+        </dxi-column>
+        <!-- remarks-->
+        <dxi-column [caption]="utilService.convert1('rcv.remarks', '전표비고')" alignment="center" dataField="remarks"></dxi-column>
+        <!-- createdBy -->
+        <dxi-column dataField="createdBy" [caption]="utilService.convert('com_text_createdBy')"
+                    [allowEditing]="false"
+                    alignment="left" [visible]=this.utilService.isShowVisibleColumn>
+          <dxo-lookup [dataSource]=dsUser displayExpr="name" valueExpr="uid"></dxo-lookup>
+        </dxi-column>
+        <!-- createdDatetime -->
+        <dxi-column dataField="createdDatetime" [caption]="utilService.convert('com_text_createdDatetime')"
+                    [allowEditing]="false" [visible]=this.utilService.isShowVisibleColumn></dxi-column>
+        <!-- modifiedBy -->
+        <dxi-column dataField="modifiedBy" [caption]="utilService.convert('com_text_modifiedBy')"
+                    [allowEditing]="false" alignment="left" [visible]=this.utilService.isShowVisibleColumn>
+          <dxo-lookup [dataSource]=dsUser displayExpr="name" valueExpr="uid"></dxo-lookup>
+        </dxi-column>
+        <!-- modifiedDatetime -->
+        <dxi-column dataField="modifiedDatetime" [caption]="utilService.convert('com_text_modifiedDatetime')"
+                    [allowEditing]="false" [visible]=this.utilService.isShowVisibleColumn></dxi-column>
+
+        <dxo-summary [calculateCustomSummary]="calculateCustomSummary">
+          <dxi-total-item showInColumn="rcvSumItemCount"
+                          name="rcvSumItemCount"
+                          summaryType="custom"
+                          valueFormat="#,##0.####"
+                          displayFormat="{0}">
+          </dxi-total-item>
+          <dxi-total-item showInColumn="rcvSumQty1"
+                          name="rcvSumQty1"
+                          summaryType="custom"
+                          valueFormat="#,##0.####"
+                          displayFormat="{0}">
+          </dxi-total-item>
+        </dxo-summary>
       </dx-data-grid>
     </dxi-item>
   </dx-accordion>
@@ -269,7 +320,7 @@
     #deleteBtn
     [options]="{
       text: utilService.convert('com_btn_del'),
-      stylingMode: 'Contained',
+      stylingMode: 'Contained', icon:'clear',
       type: 'danger',
       onClick: popupDeleteClick
     }"
@@ -280,6 +331,7 @@
     #saveBtn
     [options]="{
       text: utilService.convert('com_btn_save'),
+      icon:'check',
       type: 'success',
       onClick: popupSaveClick
     }"
@@ -290,6 +342,7 @@
     [options]="{
       text: utilService.convert('com_btn_close'),
       stylingMode: 'outlined',
+      icon:'close',
       type: 'normal',
       onClick: popupCancelClick
     }"
@@ -519,20 +572,20 @@
                 [colSpan]="6"
                 itemType="group">
         <dx-data-grid
-          #popupGrid
-          (onExporting)="gridUtil.onPageExportXlsx($event)"
-          (onFocusedCellChanged)="onFocusedCellChanging($event, this.popupGrid)"
-          (onInitNewRow)="onInitNewRow($event)"
-          (onToolbarPreparing)="gridUtil.onToolbarPreparingWithComBtn($event, this, addClick, deleteClick)"
-          [(selectedRowKeys)]="selectedRows"
-          [allowColumnReordering]="true"
-          [allowColumnResizing]="true"
-          [columnAutoWidth]="true"
-          [dataSource]="popupDataSource"
-          [focusedRowEnabled]="true"
-          [rowAlternationEnabled]="true"
-          [showRowLines]="true"
-          columnResizingMode=nextColumn
+        #popupGrid
+        [dataSource]="popupDataSource"
+        (onToolbarPreparing)="gridUtil.onToolbarPreparingWithComBtn($event, this, addClick, deleteClick)"
+        [(selectedRowKeys)]="selectedRows"
+        (onFocusedCellChanged)="onFocusedCellChanging($event, this.popupGrid)"
+        [showRowLines]="true"
+        [rowAlternationEnabled]="true"
+        [allowColumnReordering]="true"
+        [columnAutoWidth]="true"
+        [allowColumnResizing]="true"
+        [focusedRowEnabled]="true"
+        (onInitNewRow)="onInitNewRow($event)"
+        (onExporting)="gridUtil.onPageExportXlsx($event)"
+        columnResizingMode=nextColumn
         >
           <dxo-editing [(changes)]="changes"
                        [allowUpdating]="isAllowEditing"

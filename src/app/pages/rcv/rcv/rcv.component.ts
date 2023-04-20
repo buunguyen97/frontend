@@ -85,7 +85,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
     this.setItemValue = this.setItemValue.bind(this);
     this.onSelectionChangedCountry = this.onSelectionChangedCountry.bind(this);
     this.isAllowEditing = this.isAllowEditing.bind(this);
-    // this.calculateCustomSummary = this.calculateCustomSummary.bind(this);
+    this.calculateCustomSummary = this.calculateCustomSummary.bind(this);
     // this.popupShowing = this.popupShowing.bind(this);
   }
 
@@ -103,7 +103,7 @@ export class RcvComponent implements OnInit, AfterViewInit {
     this.utilService.getFoldable(this.mainForm, this.foldableBtn);
     this.utilService.getGridHeight(this.mainGrid);
     this.initForm();
-    this.initData(this.mainForm);
+    // this.initData(this.mainForm);
   }
 
   initForm(): void {
@@ -125,14 +125,6 @@ export class RcvComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-
-
-
-
-
-
-
-
     this.entityStore = new ArrayStore(
       {
         data: [],
@@ -307,9 +299,9 @@ export class RcvComponent implements OnInit, AfterViewInit {
   }
 
   popupShown(e): void {
-    // this.onSelectionChangedCountry(null); // 조회시 필터 초기화
+    this.onSelectionChangedCountry(null); // 조회시 필터 초기화
 
-    // this.deleteBtn.visible = this.popupMode === 'Edit'; // 삭제버튼
+    this.deleteBtn.visible = this.popupMode === 'Edit'; // 삭제버튼
     this.popupForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
 
     // không hiêủ
@@ -368,26 +360,26 @@ export class RcvComponent implements OnInit, AfterViewInit {
 
   async popupDeleteClick(e): Promise<void> {
     //
-    // const confirmMsg = this.utilService.convert('confirmDelete', this.utilService.convert1('rcvTx', '입고전표'));
-    // if (!await this.utilService.confirm(confirmMsg)) {
-    //   return;
-    // }
-    //
-    // try {
-    //   const deleteContent = this.popupData as RcvExpectedVO;
-    //   const result = await this.service.delete(deleteContent);
-    //   if (!result.success) {
-    //     this.utilService.notify_error(result.msg);
-    //     return;
-    //   } else {
-    //     this.utilService.notify_success('Delete success');
-    //     this.popupForm.instance.resetValues();
-    //     this.popupVisible = false;
-    //     this.onSearch();
-    //   }
-    // } catch {
-    //   this.utilService.notify_error('There was an error!');
-    // }
+    const confirmMsg = this.utilService.convert('confirmDelete', this.utilService.convert1('rcvTx', '입고전표'));
+    if (!await this.utilService.confirm(confirmMsg)) {
+      return;
+    }
+
+    try {
+      const deleteContent = this.popupData as SearchVO;
+      const result = await this.service.delete(deleteContent);
+      if (!result.success) {
+        this.utilService.notify_error(result.msg);
+        return;
+      } else {
+        this.utilService.notify_success('Delete success');
+        this.popupForm.instance.resetValues();
+        this.popupVisible = false;
+        this.onSearch();
+      }
+    } catch {
+      this.utilService.notify_error('There was an error!');
+    }
   }
 
   // 저장버튼 이벤트
@@ -516,11 +508,14 @@ export class RcvComponent implements OnInit, AfterViewInit {
 
   // 그리드 더블클릭시 호출하는 함수
   rowDblClick(e): void {
-    // this.deleteBtn.visible = true;
-    // this.supplierChangedFlg = false;
-    // this.portChangedFlg = false;
+    this.deleteBtn.visible = true;
+    this.supplierChangedFlg = false;
+    this.portChangedFlg = false;
     // // Row double 클릭시 이벤트에서 해당 Row에 대한 이벤트를 접근할 수 있다.
-    // this.showPopup('Edit', {...e.data});
+    this.showPopup('Edit', {...e.data});
+  }
+  calculateCustomSummary(options): void {
+    this.gridUtil.setCustomSummary(options, this.mainGrid, this);
   }
 
   async onNew(e): Promise<void> {
@@ -548,36 +543,36 @@ export class RcvComponent implements OnInit, AfterViewInit {
   }
 
   async onSearchPopup(): Promise<void> {
-    // if (this.popupData.uid) {
-    //   // Service의 get 함수 생성
-    //   const result = await this.service.getRcvFull(this.popupData);
+    if (this.popupData.uid) {
+      // Service의 get 함수 생성
+      const result = await this.service.getRcvFull(this.popupData);
 
-    //   // for (const r of result.data.rcvDetailList) {
-    //   //   const item = this.dsItemId.filter(el => el.uid === r.itemId);
-    //   //   r.unit3Stylecd = item.length > 0 ? item[0].unit3Stylecd : null;
-    //   // }
-    //   if (!result.success) {
-    //     this.utilService.notify_error(result.msg);
-    //     return;
-    //   } else {
-    //     this.popupGrid.instance.cancelEditData();
-    //     this.utilService.notify_success('search success');
+      // for (const r of result.data.rcvDetailList) {
+      //   const item = this.dsItemId.filter(el => el.uid === r.itemId);
+      //   r.unit3Stylecd = item.length > 0 ? item[0].unit3Stylecd : null;
+      // }
+      if (!result.success) {
+        this.utilService.notify_error(result.msg);
+        return;
+      } else {
+        this.popupGrid.instance.cancelEditData();
+        this.utilService.notify_success('search success');
 
-    //     this.popupData.moveId = result.data.moveId;
+        this.popupData.moveId = result.data.moveId;
 
-    //     this.popupEntityStore = new ArrayStore(
-    //       {
-    //         data: result.data.rcvDetailList,
-    //         key: this.key
-    //       }
-    //     );
-    //     this.popupDataSource = new DataSource({
-    //       store: this.popupEntityStore
-    //     });
-    //     this.popupGrid.focusedRowKey = null;
-    //     this.popupGrid.paging.pageIndex = 0;
-    //   }
-    // }
+        this.popupEntityStore = new ArrayStore(
+          {
+            data: result.data.rcvDetailList,
+            key: this.key
+          }
+        );
+        this.popupDataSource = new DataSource({
+          store: this.popupEntityStore
+        });
+        this.popupGrid.focusedRowKey = null;
+        this.popupGrid.paging.pageIndex = 0;
+      }
+    }
   }
 
   setFocusRow(index, grid): void {
