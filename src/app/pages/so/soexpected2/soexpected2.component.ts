@@ -27,6 +27,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   dsActFlg = [];
   dsSoStatus = [];
   dsDeliveryType = [];
+  dsPort = [];
   // summary
   searchList = [];
 
@@ -75,6 +76,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.popupDeleteClick = this.popupDeleteClick.bind(this);
     this.popupSaveClick = this.popupSaveClick.bind(this);
     this.calculateCustomSummary = this.calculateCustomSummary.bind(this);
+    this.onChangedCompany = this.onChangedCompany.bind(this);
   }
 
   ngAfterViewInit(): void {
@@ -290,6 +292,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
       this.popupData.warehouseId = this.utilService.getCommonWarehouseId();
       this.popupData.ownerId = this.utilService.getCommonOwnerId();
       this.popupData.soType = 'RENT';
+      this.popupData.actFlg = 'Y';
 
     } else {
       this.popupForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
@@ -514,4 +517,12 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   onOptionChanged(e): void {
     this.gridUtil.onOptionChangedForSummary(e, this); // 합계 계산
   }
+  onChangedCompany(e): void {
+     const companyData = [...this.dsCompany].filter(el => el.uid === e.value);
+    if (companyData.length > 0) {
+
+    }
+
+  }
+
 }

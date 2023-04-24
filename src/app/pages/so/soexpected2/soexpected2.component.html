@@ -514,10 +514,96 @@
                   [label]="{text: utilService.convert1('so_so_remarks', '비고')}">
         </dxi-item>
       </dxi-item>
-      <dxi-item [caption]="this.utilService.convert1('so.popupTitle2', '거래처 정보')"
+      <!-- Bang 2 -->
+
+      <dxi-item itemType="group" [caption]="utilService.convert1('so_so_companyinfo', '거래처정보')"
                 [colCount]="3"
-                [colSpan]="3"
-                itemType="group">
+                [colSpan]="3">
+        <!-- companyId -->
+        <dxi-item dataField="companyId"
+                  editorType="dxSelectBox"
+                  [label]="{text: utilService.convert1('so_so_companyId', '거래처')}"
+                  [editorOptions]="{  items: dsCompany,
+                                      displayExpr: 'display',
+                                      valueExpr: 'uid',
+                                      searchMode:'contains',
+                                      searchEnabled: true,
+                                      showClearButton: true,
+                                      openOnFieldClick: false,
+                                      minSearchLength: 0,
+                                      placeholder: '',
+                                      noDataText: utilService.convert('com_txt_noDataText'),
+                                      onValueChanged: onChangedCompany
+                                   }">
+          <dxi-validation-rule type="required"
+                               [message]="utilService.convert('com_valid_required', utilService.convert('so_so_companyId'))">
+          </dxi-validation-rule>
+        </dxi-item>
+        <!-- shipToId -->
+        <dxi-item dataField="shipToId"
+                  editorType="dxSelectBox" [visible]=true
+                  [label]="{text: utilService.convert1('so_so_shipToId', '납품처')}"
+                  [editorOptions]="{  items: dsShipTo,
+                                      displayExpr: 'display',
+                                      valueExpr: 'uid',
+                                      searchMode:'contains',
+                                      searchEnabled: true,
+                                      showClearButton: true,
+                                      openOnFieldClick: false,
+                                      minSearchLength: 0,
+                                      placeholder: '',
+                                      noDataText: utilService.convert('com_txt_noDataText')
+                                    }">
+        </dxi-item>
+        <dxi-item itemType="empty" [colSpan]="2"></dxi-item>
+        <!-- countrycd -->
+        <dxi-item dataField="countrycd"
+                  editorType="dxSelectBox"
+                  [label]="{text: utilService.convert1('so_so_countrycd', '국가')}"
+                  [editorOptions]="{  items: dsCountry,
+                                      displayExpr: 'display',
+                                      valueExpr: 'code',
+                                      searchMode:'contains',
+                                      searchEnabled: true,
+                                      openOnFieldClick: false,
+                                      minSearchLength: 0,
+                                      placeholder: '',
+                                      noDataText: utilService.convert('com_txt_noDataText')
+                                     }"></dxi-item>
+        <!-- port -->
+        <dxi-item dataField="port"
+                  editorType="dxSelectBox"
+                  [label]="{text: utilService.convert1( 'so_so_port', '항구')}"
+                  [editorOptions]="{  items: dsPort,
+                                      displayExpr: 'display',
+                                      valueExpr: 'code',
+                                      searchMode:'contains',
+                                      searchEnabled: true,
+                                      openOnFieldClick: false,
+                                      minSearchLength: 0,
+                                      placeholder: '',
+                                      noDataText: utilService.convert('com_txt_noDataText')
+                                     }"></dxi-item>
+        <!-- zip -->
+        <dxi-item dataField="zip" [label]="{text: utilService.convert1('so_so_zip', '우편번호')}" ></dxi-item>
+        <!-- address1 -->
+        <dxi-item dataField="address1" [label]="{text: utilService.convert1('so_so_address1', '주소1')}"
+                  [colSpan]="3"></dxi-item>
+        <!-- address2 -->
+        <dxi-item dataField="address2" [label]="{text: utilService.convert1('so_so_address2', '주소2')}"
+                  [colSpan]="3"></dxi-item>
+        <!-- refName -->
+        <dxi-item dataField="refName" [label]="{text: utilService.convert1('so_so_refName', '담당자')}"
+        ></dxi-item>
+        <!-- phone -->
+        <dxi-item dataField="phone" [label]="{text: utilService.convert1('so_so_phone', '전화번호')}"
+                  [editorOptions]="{mask: '+ccc) ccccccccccccccccc', maskChar: ' ', maskInvalidMessage: 'The input value does not match the mask', onOptionChanged: focusIn}"></dxi-item>
+        <!-- email -->
+        <dxi-item dataField="email" [label]="{text: utilService.convert1('so_so_email', 'E-Mail')}" >
+          <dxi-validation-rule type="email"
+                               [message]="utilService.convert1('mm_company_email_vali', 'email 형식에 맞지 않습니다.')"></dxi-validation-rule>
+        </dxi-item>
+        <!-- <dxi-item dataField="logisticsId" [label]="{text: 'LogisticsId'}" [visible]="false"></dxi-item> -->
 
 
       </dxi-item>
