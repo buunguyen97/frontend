@@ -23,10 +23,10 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   dsShipTo = [];
   dsWarehouse = [];
   dsOwner = [];
-  dsCountry =[];
-  dsYn =[];
-  dsSoStatus =[];
-  dsDeliveryType =[];
+  dsCountry = [];
+  dsActFlg = [];
+  dsSoStatus = [];
+  dsDeliveryType = [];
   // summary
   searchList = [];
 
@@ -43,8 +43,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   popupData: SearchVO;
 
   changes = [];
-  dsActFlg = [];
-
   key = 'uid';
   @ViewChild('mainForm', {static: false}) mainForm: DxFormComponent;
   @ViewChild('mainGrid', {static: false}) mainGrid: DxDataGridComponent;
@@ -119,6 +117,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     // 창고
     this.codeService.getCommonWarehouse(Number(this.utilService.getUserUid())).subscribe(result => {
       this.dsWarehouse = result.data;
+      console.log('dsWarehouse', this.dsWarehouse);
       this.mainForm.instance.getEditor('warehouseId').option('value', this.utilService.getCommonWarehouseId());
     });
     this.codeService.getCommonOwner(Number(this.utilService.getUserUid())).subscribe(result => {
@@ -130,7 +129,12 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     });
     this.codeService.getCodeOrderByCode(this.G_TENANT, 'SODELIVERYTYPE').subscribe(result => {
       this.dsDeliveryType = result.data;
-      console.log('result',this.dsDeliveryType);
+    });
+    this.codeService.getCode(this.G_TENANT, 'SOTYPE').subscribe(result => {
+      this.dsSoType = result.data;
+    });
+    this.codeService.getCode(this.G_TENANT, 'YN').subscribe(result => {
+      this.dsActFlg = result.data;
     });
   }
   initData(form): void {
@@ -280,9 +284,12 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
     if (this.popupMode === 'Add') {
 
-      this.popupData.sts = '200';
+      this.popupData.sts = SoCommonUtils.STS_IDLE;
+      this.popupData.deliveryType = 'OUTER';
+      this.popupData.shipSchDate  = this.utilService.getFormatDate(new Date());
       this.popupData.warehouseId = this.utilService.getCommonWarehouseId();
       this.popupData.ownerId = this.utilService.getCommonOwnerId();
+      this.popupData.soType = 'RENT';
 
     } else {
       this.popupForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());

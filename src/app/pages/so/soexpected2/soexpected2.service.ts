@@ -147,6 +147,10 @@ export interface SearchVO {
 
   ownerId: number;      // 화주
 
+  deliveryType: string;
+  shipSchDate:string;
+  soType:string;
+
   rcvDetailList: RcvDetailVO[];
 }
 
