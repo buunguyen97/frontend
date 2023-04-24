@@ -229,6 +229,7 @@ import {Saor251Component} from './pages/saor/saor250/saor251.component';
 import {Saor241Component} from './pages/saor/saor240/saor241.component';
 import {Sast072Component} from './pages/sast/sast072/sast072.component';
 import {RcvComponent} from './pages/rcv/rcv/rcv.component';
+import {Soexpected2Component} from './pages/so/soexpected2/soexpected2.component';
 const routes: Routes = [
   {
     path: 'tasks',
@@ -1396,6 +1397,11 @@ const routes: Routes = [
   {
     path: 'rcv/rcv',
     component: RcvComponent,
+    canActivate: [AuthGuardService]
+  },
+  {
+    path: 'so/soexpected2',
+    component: Soexpected2Component,
     canActivate: [AuthGuardService]
   },
   {

@@ -37,6 +37,7 @@ import {DxoLookupModule} from 'devextreme-angular/ui/nested';
 import {SoCommonUtils} from './soCommonUtils';
 import {SoallocreportComponent} from './soallocreport/soallocreport.component';
 import {SoReportComponent} from './so-report/so-report.component';
+import { Soexpected2Component } from './soexpected2/soexpected2.component';
 
 @NgModule({
   declarations: [
@@ -58,7 +59,8 @@ import {SoReportComponent} from './so-report/so-report.component';
     SoinspectComponent,
     ArrangeTruckConfirmComponent,
     SoallocreportComponent,
-    SoReportComponent
+    SoReportComponent,
+    Soexpected2Component
   ],
   imports: [
     CommonModule,
