@@ -5,16 +5,16 @@ import DataSource from 'devextreme/data/data_source';
 import ArrayStore from 'devextreme/data/array_store';
 import { CommonUtilService } from '../../../shared/services/common-util.service';
 import { CommonCodeService } from '../../../shared/services/common-code.service';
-import { SoDetailVO, SoService, SoVO } from './so.service';
+import { DetailVO, SoServSoexpected2Serviceice, searchVO } from './soexpected2.service';
 import { GridUtilService } from '../../../shared/services/grid-util.service';
 import { COMMONINITSTR } from '../../../shared/constants/commoninitstr';
 
 @Component({
-  selector: 'app-so',
-  templateUrl: './so.component.html',
-  styleUrls: ['./so.component.scss']
+  selector: 'app-soexpected2',
+  templateUrl: './soexpected2.component.html',
+  styleUrls: ['./soexpected2.component.scss']
 })
-export class SoComponent implements OnInit, AfterViewInit {
+export class Soexpected2Component implements OnInit, AfterViewInit {
 
   @ViewChild('mainForm', { static: false }) mainForm: DxFormComponent;
   @ViewChild('mainGrid', { static: false }) mainGrid: DxDataGridComponent;
@@ -34,7 +34,7 @@ export class SoComponent implements OnInit, AfterViewInit {
 
   // ***** main ***** //
   // Form
-  mainFormData: SoVO = {} as SoVO;
+  mainFormData: searchVO = {} as searchVO;
   // Grid
   mainDataSource: DataSource;
   mainEntityStore: ArrayStore;
@@ -45,12 +45,12 @@ export class SoComponent implements OnInit, AfterViewInit {
   // ***** popup ***** //
   popupMode = 'Add';
   // Form
-  popupFormData: SoVO;
+  popupFormData: searchVO;
   // Grid
   popupDataSource: DataSource;
   popupEntityStore: ArrayStore;
   popupKey = 'uid';
-  codeList: SoDetailVO[];
+  codeList: DetailVO[];
 
   // Changes
   popupChanges = [];
@@ -86,7 +86,7 @@ export class SoComponent implements OnInit, AfterViewInit {
   loadStatePopup = this.gridUtil.fnGridLoadState(this.GRID_STATE_KEY + '_popup');
 
   constructor(public utilService: CommonUtilService,
-    private service: SoService,
+    private service: SoServSoexpected2Serviceice,
     private codeService: CommonCodeService,
     public gridUtil: GridUtilService
   ) {
@@ -142,45 +142,13 @@ export class SoComponent implements OnInit, AfterViewInit {
     this.codeService.getCode(this.G_TENANT, 'SOSTATUS').subscribe(result => {
       this.dsSoStatus = result.data;
     });
-
-    // 물품
-    this.codeService.getItem(this.G_TENANT).subscribe(result => {
-      this.dsItemId = result.data;
-    });
-
-    // 품목관리사
-    this.codeService.getItemAdmin(this.G_TENANT).subscribe(result => {
-      this.dsItemAdmin = result.data;
-    });
-
-    // 사용여부
-    this.codeService.getCode(this.G_TENANT, 'YN').subscribe(result => {
-      this.dsYN = result.data;
-    });
-
-    // 불량여부
-    this.codeService.getCode(this.G_TENANT, 'DAMAGEFLG').subscribe(result => {
-      this.dsDamageFlg = result.data;
-    });
-
     // 국가
     this.codeService.getCodeOrderByCode(this.G_TENANT, 'COUNTRY').subscribe(result => {
       this.dsCountry = result.data;
     });
-
-    // 항구
-    this.codeService.getCode(this.G_TENANT, 'PORT').subscribe(result => {
-      this.copyPort = result.data;
-    });
-
     // 사용자
     this.codeService.getUser(this.G_TENANT).subscribe(result => {
       this.dsUser = result.data;
-    });
-
-    // 운송구분
-    this.codeService.getCode(this.G_TENANT, 'SODELIVERYTYPE').subscribe(result => {
-      this.dsDeliveryType = result.data;
     });
   }
 
@@ -201,8 +169,11 @@ export class SoComponent implements OnInit, AfterViewInit {
     const data = this.mainForm.instance.validate();
 
     // 거래처
-    this.codeService.getCompany(this.G_TENANT, null, true, null, true, null, null, null).subscribe(result => {
+    this.codeService.getCompany(this.G_TENANT, null, true, null, null, null, null, null).subscribe(result => {
       this.dsCompany = result.data;
+    });
+    this.codeService.getCompany(this.G_TENANT, null, null, true, null, null, null, null).subscribe(result => {
+      this.dsShipTo = result.data;
     });
 
     if (data.isValid) {
@@ -230,7 +201,7 @@ export class SoComponent implements OnInit, AfterViewInit {
 
 
   // 팝업 열기
-  async onPopupOpen(e): Promise<void> {
+  async onNew(e): Promise<void> {
     await this.onSelectionChangedCountry(e);
 
     this.inputDataSource([], 'popup');
@@ -265,7 +236,7 @@ export class SoComponent implements OnInit, AfterViewInit {
       ownerId: this.utilService.getCommonOwnerId(),
       shipSchDate: this.utilService.getFormatDate(new Date()),
       deliveryType: 'OUTER'
-    } as SoVO;
+    } as searchVO;
   }
 
   onShown(): void {
@@ -345,7 +316,7 @@ export class SoComponent implements OnInit, AfterViewInit {
 
     if (this.resultMsgCallback(result, 'PopupSearch')) {
       this.popupFormData = result.data;
-      this.inputDataSource(result.data.soDetailList, 'popup');
+      this.inputDataSource(result.data.DetailList, 'popup');
     }
   }
 
@@ -385,84 +356,84 @@ export class SoComponent implements OnInit, AfterViewInit {
   }
 
   async onPopupSave(): Promise<void> {
-    const popData = this.popupForm.instance.validate();
-    const detailList = await this.collectDetail(this.popupChanges);
+    // const popData = this.popupForm.instance.validate();
+    // const detailList = await this.collectDetail(this.popupChanges);
 
-    if (popData.isValid) {
-      let result;
-      this.popupFormData.soDetailList = detailList;
+    // if (popData.isValid) {
+    //   let result;
+    //   this.popupFormData.soDetailList = detailList;
 
-      if (this.popupGrid.instance.getVisibleRows().length === 0) {
-        this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert('so_so_popupGridTitle')));
-        return;
-      }
-      const visibleRows = this.popupGrid.instance.getVisibleRows();
-      let checkCell = false;
+    //   if (this.popupGrid.instance.getVisibleRows().length === 0) {
+    //     this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert('so_so_popupGridTitle')));
+    //     return;
+    //   }
+    //   const visibleRows = this.popupGrid.instance.getVisibleRows();
+    //   let checkCell = false;
 
-      for (const row of visibleRows) {
-        const CELLS = 'cells';
+    //   for (const row of visibleRows) {
+    //     const CELLS = 'cells';
 
-        for (const cell of row[CELLS]) {
-          const dField = cell.column.dataField;
+    //     for (const cell of row[CELLS]) {
+    //       const dField = cell.column.dataField;
 
-          if (dField === 'itemAdminId' || dField === 'itemId') {
+    //       if (dField === 'itemAdminId' || dField === 'itemId') {
 
-            if (!cell.value) {
-              checkCell = true;
-              this.setFocusRow(row.rowIndex);
-              this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert('so_so_' + dField)));
-              break;
-            }
-          } else if (dField === 'expectQty1') {
+    //         if (!cell.value) {
+    //           checkCell = true;
+    //           this.setFocusRow(row.rowIndex);
+    //           this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert('so_so_' + dField)));
+    //           break;
+    //         }
+    //       } else if (dField === 'expectQty1') {
 
-            if (cell.value <= 0) {
-              checkCell = true;
-              this.setFocusRow(row.rowIndex);
-              this.utilService.notify_error(this.utilService.convert('so_valid_qtygt', this.utilService.convert('so_so_expectQty1'), '0'));
-              break;
-            }
-          }
-        }
+    //         if (cell.value <= 0) {
+    //           checkCell = true;
+    //           this.setFocusRow(row.rowIndex);
+    //           this.utilService.notify_error(this.utilService.convert('so_valid_qtygt', this.utilService.convert('so_so_expectQty1'), '0'));
+    //           break;
+    //         }
+    //       }
+    //     }
 
-        if (checkCell) {
-          break;
-        }
-      }
+    //     if (checkCell) {
+    //       break;
+    //     }
+    //   }
 
-      if (checkCell) {
-        return;
-      }
-      const confirmMsg = this.utilService.convert('confirmExecute', this.utilService.convert('com_btn_save'));
+    //   if (checkCell) {
+    //     return;
+    //   }
+    //   const confirmMsg = this.utilService.convert('confirmExecute', this.utilService.convert('com_btn_save'));
 
-      if (!await this.utilService.confirm(confirmMsg)) {
-        return;
-      }
+    //   if (!await this.utilService.confirm(confirmMsg)) {
+    //     return;
+    //   }
 
-      if (this.popupMode === 'Add') {
-        result = await this.service.save(this.popupFormData);
-      } else {
-        result = await this.service.update(this.popupFormData);
-      }
+    //   if (this.popupMode === 'Add') {
+    //     result = await this.service.save(this.popupFormData);
+    //   } else {
+    //     result = await this.service.update(this.popupFormData);
+    //   }
 
-      if (this.resultMsgCallback(result, 'Save')) {
-        this.popupFormData = result.data;
-        this.onPopupClose();
-      }
-    }
+    //   if (this.resultMsgCallback(result, 'Save')) {
+    //     this.popupFormData = result.data;
+    //     this.onPopupClose();
+    //   }
+    // }
   }
 
   async onPopupDelete(): Promise<void> {
-    const confirmMsg = this.utilService.convert('confirmExecute', this.utilService.convert('com_btn_del'));
+    // const confirmMsg = this.utilService.convert('confirmExecute', this.utilService.convert('com_btn_del'));
 
-    if (!await this.utilService.confirm(confirmMsg)) {
-      return;
-    }
+    // if (!await this.utilService.confirm(confirmMsg)) {
+    //   return;
+    // }
 
-    const result = await this.service.delete(this.popupFormData);
+    // const result = await this.service.delete(this.popupFormData);
 
-    if (this.resultMsgCallback(result, 'Delete')) {
-      this.onPopupClose();
-    }
+    // if (this.resultMsgCallback(result, 'Delete')) {
+    //   this.onPopupClose();
+    // }
   }
 
   resultMsgCallback(result, msg): boolean {
@@ -475,64 +446,64 @@ export class SoComponent implements OnInit, AfterViewInit {
     return result.success;
   }
 
-  async collectDetail(changes: any): Promise<any[]> {
-    const detailList: any[] = [];
+  // async collectDetail(changes: any): Promise<any[]> {
+  //   const detailList: any[] = [];
 
-    for (const rowIndex in changes) {
-      // Insert일 경우 UUID가 들어가 있기 때문에 Null로 매핑한다.
-      if (changes[rowIndex].type === 'insert') {
-        detailList.push(Object.assign({ operType: changes[rowIndex].type, uid: null }, changes[rowIndex].data));
-      } else if (changes[rowIndex].type === 'remove') {
-        detailList.push(
-          Object.assign(
-            { operType: changes[rowIndex].type, uid: changes[rowIndex].key }, changes[rowIndex].data
-          )
-        );
-      } else {
-        detailList.push(
-          Object.assign(
-            { operType: changes[rowIndex].type, uid: changes[rowIndex].key }, changes[rowIndex].data
-          )
-        );
-      }
-    }
-    return detailList;
-  }
+  //   for (const rowIndex in changes) {
+  //     // Insert일 경우 UUID가 들어가 있기 때문에 Null로 매핑한다.
+  //     if (changes[rowIndex].type === 'insert') {
+  //       detailList.push(Object.assign({ operType: changes[rowIndex].type, uid: null }, changes[rowIndex].data));
+  //     } else if (changes[rowIndex].type === 'remove') {
+  //       detailList.push(
+  //         Object.assign(
+  //           { operType: changes[rowIndex].type, uid: changes[rowIndex].key }, changes[rowIndex].data
+  //         )
+  //       );
+  //     } else {
+  //       detailList.push(
+  //         Object.assign(
+  //           { operType: changes[rowIndex].type, uid: changes[rowIndex].key }, changes[rowIndex].data
+  //         )
+  //       );
+  //     }
+  //   }
+  //   return detailList;
+  // }
 
   onSelectionChangedCompany(e): void {  // 거래처 코드
-    const companyData = [...this.dsCompany].filter(el => el.uid === e.value);
+    // const companyData = [...this.dsCompany].filter(el => el.uid === e.value);
 
-    if (companyData.length > 0) {
+    // if (companyData.length > 0) {
 
-      if (this.popup.visible && this.changedCompanyCheck) {
-        const formList = ['refName', 'email', 'phone', 'countrycd', 'port', 'zip', 'address1', 'address2'];
+    //   if (this.popup.visible && this.changedCompanyCheck) {
+    //     const formList = ['refName', 'email', 'phone', 'countrycd', 'port', 'zip', 'address1', 'address2'];
 
-        if (!e.value) {
+    //     if (!e.value) {
 
-          formList.forEach(el => {
-            this.popupFormData[el] = null;
-          });
-        } else {
+    //       formList.forEach(el => {
+    //         this.popupFormData[el] = null;
+    //       });
+    //     } else {
 
-          formList.forEach(el => {
+    //       formList.forEach(el => {
 
-            if (!companyData[0][el === 'phone' ? 'phone1' : el]) {
-              this.popupFormData[el] = null;
-            } else {
-              this.popupFormData[el] = companyData[0][el === 'phone' ? 'phone1' : el];
-            }
-          });
-        }
-      }
-    }
+    //         if (!companyData[0][el === 'phone' ? 'phone1' : el]) {
+    //           this.popupFormData[el] = null;
+    //         } else {
+    //           this.popupFormData[el] = companyData[0][el === 'phone' ? 'phone1' : el];
+    //         }
+    //       });
+    //     }
+    //   }
+    // }
   }
 
   onFocusedCellChangedPopupGrid(e): void {
-    this.setFocusRow(e.rowIndex);
+    // this.setFocusRow(e.rowIndex);
   }
 
   setFocusRow(index): void {
-    this.popupGrid.focusedRowIndex = index;
+    // this.popupGrid.focusedRowIndex = index;
   }
 
   onReset(): void {
@@ -558,8 +529,8 @@ export class SoComponent implements OnInit, AfterViewInit {
   }
 
   setItemAdminValue(rowData: any, value: any): void {
-    rowData.itemAdminId = value;
-    rowData.itemId = null;
+    // rowData.itemAdminId = value;
+    // rowData.itemId = null;
   }
 
   getFilteredItemId(options): any {
@@ -594,17 +565,17 @@ export class SoComponent implements OnInit, AfterViewInit {
   }
 
   setIsSerial(row: any, value: any): void {
-    row.itemId = value;
-    row.unit = value;
-    row.isSerial = this.dsItemId.filter(el => el.uid === value)[0].isSerial;
+    // row.itemId = value;
+    // row.unit = value;
+    // row.isSerial = this.dsItemId.filter(el => el.uid === value)[0].isSerial;
   }
 
   onSelectionChangedCountry(e): void {
-    this.dsPort = this.copyPort.filter(el => el.etcColumn1 === e.value);
+    // this.dsPort = this.copyPort.filter(el => el.etcColumn1 === e.value);
   }
 
   onSoTypeChanged(e): void {
-    this.popupGrid.instance.cancelEditData();
+    // this.popupGrid.instance.cancelEditData();
   }
 
   // phone 커서 위치
