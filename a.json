@@ -1,0 +1,40 @@
+{
+  "tenant": "1000",
+  "supplierPortcd": null,
+  "ownerId": null,
+  "companyId": 1,
+  "warehouseId": null,
+  "logisticsId": null,
+  "actFlg": null,
+  "sts": null,
+  "rcvSchDate": null,
+  "rcvTypecd": null,
+  "supplierId": null,
+  "refName": "",
+  "supplierPhone": "",
+  "supplierCountrycd": null,
+  "supplierZip": "",
+  "supplierAddress1": "",
+  "supplierAddress2": "",
+  "rcvDetailList": [
+    {
+      "operType": "insert",
+      "uid": null,
+      "tenant": "1000",
+      "itemAdminId": 1,
+      "damageFlg": "N",
+      "noShippingFlg": "N",
+      "foreignCargoFlg": "N",
+      "customsReleaseFlg": "N",
+      "taxFlg": "N",
+      "expectQty1": 111111,
+      "receivedQty1": 0,
+      "adjustQty1": 0,
+      "whInDate": "2023-04-24",
+      "itemId": 353,
+      "isSerial": "N",
+      "unit": 353,
+      "ownerId": 1
+    }
+  ]
+}

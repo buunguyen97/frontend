@@ -6,12 +6,7 @@
  */
 
 import {Injectable} from '@angular/core';
-import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor, HTTP_INTERCEPTORS
-} from '@angular/common/http';
+import {HTTP_INTERCEPTORS, HttpEvent, HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {APPCONSTANTS} from '../constants/appconstants';
 import {CookieService} from 'ngx-cookie-service';
@@ -73,10 +68,10 @@ export class JHttpInterceptor implements HttpInterceptor {
       , withCredentials: true
     });
 
-    console.log('method : ' + request.method);
-    console.log('url : ' + request.url);
+    // console.log('method : ' + request.method);
+    // console.log('url : ' + request.url);
     if (request.body) {
-      console.log('body : ' + JSON.stringify(request.body));
+      // console.log('body : ' + JSON.stringify(request.body));
     }
 
     return next.handle(request);
