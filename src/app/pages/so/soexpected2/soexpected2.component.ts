@@ -306,7 +306,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     if (this.popupFormData.sts === '100') {
 
       this.popupGrid.instance.addRow().then(() => {
-        // this.setFocusRow(this.popupGrid.instance.getVisibleRows().length - 1);
+        this.setFocusRow(this.popupGrid.instance.getVisibleRows().length - 1);
       });
     }
   }
@@ -314,7 +314,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   onInitNewRowPopup(e): void {
     e.data = {
       tenant: this.utilService.getTenant(),
-      // itemAdminId: this.dsItemAdmin.length > 0 ? this.dsItemAdmin[0].uid : null,
+
       itemAdminId: this.utilService.getCommonItemAdminId(),
       expectQty1: 0, allocQty1: 0, pickedQty1: 0, shippedQty1: 0, adjustQty1: 0,
       lotReserveFlg: 'N', damageFlg: 'N'
