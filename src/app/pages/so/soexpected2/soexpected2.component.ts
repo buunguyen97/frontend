@@ -306,7 +306,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     if (this.popupFormData.sts === '100') {
 
       this.popupGrid.instance.addRow().then(() => {
-        this.setFocusRow(this.popupGrid.instance.getVisibleRows().length - 1);
+        // this.setFocusRow(this.popupGrid.instance.getVisibleRows().length - 1);
       });
     }
   }
@@ -448,17 +448,17 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   }
 
   async onPopupDelete(): Promise<void> {
-    // const confirmMsg = this.utilService.convert('confirmExecute', this.utilService.convert('com_btn_del'));
+    const confirmMsg = this.utilService.convert('confirmExecute', this.utilService.convert('com_btn_del'));
 
-    // if (!await this.utilService.confirm(confirmMsg)) {
-    //   return;
-    // }
+    if (!await this.utilService.confirm(confirmMsg)) {
+      return;
+    }
 
-    // const result = await this.service.delete(this.popupFormData);
+    const result = this.service.delete(this.popupFormData);
 
-    // if (this.resultMsgCallback(result, 'Delete')) {
-    //   this.onPopupClose();
-    // }
+    if (this.resultMsgCallback(result, 'Delete')) {
+      this.onPopupClose();
+    }
   }
 
   resultMsgCallback(result, msg): boolean {
