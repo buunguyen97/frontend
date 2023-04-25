@@ -132,6 +132,76 @@ export interface searchVO {
   address2: string;
   soDetailList: SoDetailVO[];
   createdBy: number;
+
+  // tenant: string;
+
+  // uid: number;
+  // soKey: string;
+  // ownerSoNo: string;
+  // preOwnerSoNo: string;
+  // soType: string;
+  // partFlg: number;
+  // actFlg: string;
+  // sts: string;
+
+  // companyId: number;
+  // ownerId: number;
+  // shipSchDate: string;
+  // shipDate: Date;
+  // delivSchDate: Date;
+  // delivDate: Date;
+  // carrySchDate: Date;
+  // transportPriority: number;
+
+  // logisticsId: number;
+  // warehouseId: number;
+  // customerId: number;
+  // shipToId: number;
+  // shipToSub: string;
+  // delivName: string;
+
+  // countrycd: string;
+  // zip: string;
+  // address1: string;
+  // address2: string;
+  // port: string;
+  // phone: string;
+  // email: string;
+  // fax: string;
+  // refName: string;
+  // allocGroup: string;
+
+  // carrierId: number;
+  // carrierName: string;
+  // carrierWbNo: string;
+
+  // carrierNo: string;
+  // carrierSname: string;
+  // otherRefNo1: string;
+  // otherRefNo2: string;
+  // otherRefNo3: string;
+
+  // pickBatchId: number;
+
+  // orderId: number;
+  // ownerOrderNo: string;
+  // orderType: string;
+  // custOrderNo: string;
+  // originalPoNo: string;
+  // rmaNo: string;
+  // orderDate: Date;
+  // moveId: number;
+  // assyId: number;
+
+  // remarks: string;
+  // deliveryType: string;
+
+  // soDetailList: SoDetailVO[];
+
+  // fromShipSchDate: string;
+  // toShipSchDate: string;
+  // fromShipDate: string;
+  // toShipDate: string;
 }
 export interface DetailVO {
   uid: number;

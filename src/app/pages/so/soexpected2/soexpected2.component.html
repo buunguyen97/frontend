@@ -472,7 +472,7 @@
                         <dxi-column dataField="tenant" caption="Tenant" [visible]="false" [allowSearch]="false"
                             [showInColumnChooser]="false" [allowEditing]="false"></dxi-column>
                         <dxi-column dataField="itemAdminId" cssClass="grid-cell-required"
-                            [setCellValue]="setItemAdminValue" [visible]="false"
+                            [setCellValue]="setItemAdminValue"
                             [caption]="utilService.convert1('so_so_itemAdminId', '품목관리사')">
                             <dxo-lookup [dataSource]="dsItemAdmin" displayExpr="display" valueExpr="uid">
                             </dxo-lookup>

@@ -44,6 +44,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
   // ***** popup ***** //
   popupMode = 'Add';
+  popupVisible = false;
   // Form
   popupFormData: searchVO;
   // Grid
@@ -380,70 +381,70 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   }
 
   async onPopupSave(): Promise<void> {
-    // const popData = this.popupForm.instance.validate();
-    // const detailList = await this.collectDetail(this.popupChanges);
+    const popData = this.popupForm.instance.validate();
+    const detailList = await this.collectDetail(this.popupChanges);
 
-    // if (popData.isValid) {
-    //   let result;
-    //   this.popupFormData.SoDetailList = detailList;
+    if (popData.isValid) {
+      let result;
+      this.popupFormData.soDetailList = detailList;
 
-    //   if (this.popupGrid.instance.getVisibleRows().length === 0) {
-    //     this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert('so_so_popupGridTitle')));
-    //     return;
-    //   }
-    //   const visibleRows = this.popupGrid.instance.getVisibleRows();
-    //   let checkCell = false;
+      if (this.popupGrid.instance.getVisibleRows().length === 0) {
+        this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert('so_so_popupGridTitle')));
+        return;
+      }
+      const visibleRows = this.popupGrid.instance.getVisibleRows();
+      let checkCell = false;
 
-    //   for (const row of visibleRows) {
-    //     const CELLS = 'cells';
+      for (const row of visibleRows) {
+        const CELLS = 'cells';
 
-    //     for (const cell of row[CELLS]) {
-    //       const dField = cell.column.dataField;
+        for (const cell of row[CELLS]) {
+          const dField = cell.column.dataField;
 
-    //       if (dField === 'itemAdminId' || dField === 'itemId') {
+          if (dField === 'itemAdminId' || dField === 'itemId') {
 
-    //         if (!cell.value) {
-    //           checkCell = true;
-    //           this.setFocusRow(row.rowIndex);
-    //           this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert('so_so_' + dField)));
-    //           break;
-    //         }
-    //       } else if (dField === 'expectQty1') {
+            if (!cell.value) {
+              checkCell = true;
+              this.setFocusRow(row.rowIndex);
+              this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert('so_so_' + dField)));
+              break;
+            }
+          } else if (dField === 'expectQty1') {
 
-    //         if (cell.value <= 0) {
-    //           checkCell = true;
-    //           this.setFocusRow(row.rowIndex);
-    //           this.utilService.notify_error(this.utilService.convert('so_valid_qtygt', this.utilService.convert('so_so_expectQty1'), '0'));
-    //           break;
-    //         }
-    //       }
-    //     }
+            if (cell.value <= 0) {
+              checkCell = true;
+              this.setFocusRow(row.rowIndex);
+              this.utilService.notify_error(this.utilService.convert('so_valid_qtygt', this.utilService.convert('so_so_expectQty1'), '0'));
+              break;
+            }
+          }
+        }
 
-    //     if (checkCell) {
-    //       break;
-    //     }
-    //   }
+        if (checkCell) {
+          break;
+        }
+      }
 
-    //   if (checkCell) {
-    //     return;
-    //   }
-    //   const confirmMsg = this.utilService.convert('confirmExecute', this.utilService.convert('com_btn_save'));
+      if (checkCell) {
+        return;
+      }
+      const confirmMsg = this.utilService.convert('confirmExecute', this.utilService.convert('com_btn_save'));
 
-    //   if (!await this.utilService.confirm(confirmMsg)) {
-    //     return;
-    //   }
+      if (!await this.utilService.confirm(confirmMsg)) {
+        return;
+      }
 
-    //   if (this.popupMode === 'Add') {
-    //     result = await this.service.save(this.popupFormData);
-    //   } else {
-    //     result = await this.service.update(this.popupFormData);
-    //   }
+      if (this.popupMode === 'Add') {
+        result = await this.service.save(this.popupFormData);
+      } else {
+        result = await this.service.update(this.popupFormData);
+      }
 
-    //   if (this.resultMsgCallback(result, 'Save')) {
-    //     this.popupFormData = result.data;
-    //     this.onPopupClose();
-    //   }
-    // }
+      if (this.resultMsgCallback(result, 'Save')) {
+        this.popupFormData = result.data;
+        this.onPopupClose();
+      }
+    }
   }
 
   async onPopupDelete(): Promise<void> {
