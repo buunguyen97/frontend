@@ -571,7 +571,7 @@
                             [caption]="utilService.convert1('so_so_mngDate', '관리일자', 'Manage Date')"
                             [allowEditing]="false" [visible]="false">
                         </dxi-column>
-                        <dxi-column dataField="isSerial" [caption]="utilService.convert('시리얼여부', '시리얼여부')"
+                        <dxi-column dataField="isSerial" [caption]="utilService.convert1('so_so_serials', '시리얼여부')"
                             alignment="center">
                             <dxo-lookup [dataSource]="dsYN" displayExpr="codeName" valueExpr="code">
                             </dxo-lookup>

@@ -5,7 +5,7 @@ import DataSource from 'devextreme/data/data_source';
 import ArrayStore from 'devextreme/data/array_store';
 import { CommonUtilService } from '../../../shared/services/common-util.service';
 import { CommonCodeService } from '../../../shared/services/common-code.service';
-import { DetailVO, SoServSoexpected2Serviceice, searchVO } from './soexpected2.service';
+import { SoDetailVO, SoServSoexpected2Serviceice, searchVO } from './soexpected2.service';
 import { GridUtilService } from '../../../shared/services/grid-util.service';
 import { COMMONINITSTR } from '../../../shared/constants/commoninitstr';
 
@@ -50,7 +50,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   popupDataSource: DataSource;
   popupEntityStore: ArrayStore;
   popupKey = 'uid';
-  codeList: DetailVO[];
+  codeList: SoDetailVO[];
 
   // Changes
   popupChanges = [];
@@ -79,7 +79,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   changedCompanyCheck = true;
   shownFlag = false;
 
-  GRID_STATE_KEY = 'so_so';
+  GRID_STATE_KEY = 'so_soexpected2';
   saveStateMain = this.gridUtil.fnGridSaveState(this.GRID_STATE_KEY + '_main');
   loadStateMain = this.gridUtil.fnGridLoadState(this.GRID_STATE_KEY + '_main');
   saveStatePopup = this.gridUtil.fnGridSaveState(this.GRID_STATE_KEY + '_popup');
@@ -142,6 +142,10 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.codeService.getCode(this.G_TENANT, 'SOSTATUS').subscribe(result => {
       this.dsSoStatus = result.data;
     });
+    // 항구
+    this.codeService.getCode(this.G_TENANT, 'PORT').subscribe(result => {
+      this.copyPort = result.data;
+    });
     // 국가
     this.codeService.getCodeOrderByCode(this.G_TENANT, 'COUNTRY').subscribe(result => {
       this.dsCountry = result.data;
@@ -149,6 +153,26 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     // 사용자
     this.codeService.getUser(this.G_TENANT).subscribe(result => {
       this.dsUser = result.data;
+    });
+    // 운송구분
+    this.codeService.getCode(this.G_TENANT, 'SODELIVERYTYPE').subscribe(result => {
+      this.dsDeliveryType = result.data;
+    });
+    // 품목관리사
+    this.codeService.getItemAdmin(this.G_TENANT).subscribe(result => {
+      this.dsItemAdmin = result.data;
+    });
+    // 물품
+    this.codeService.getItem(this.G_TENANT).subscribe(result => {
+      this.dsItemId = result.data;
+    });
+    // 사용여부
+    this.codeService.getCode(this.G_TENANT, 'YN').subscribe(result => {
+      this.dsYN = result.data;
+    });
+    // 불량여부
+    this.codeService.getCode(this.G_TENANT, 'DAMAGEFLG').subscribe(result => {
+      this.dsDamageFlg = result.data;
     });
   }
 
@@ -316,7 +340,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
     if (this.resultMsgCallback(result, 'PopupSearch')) {
       this.popupFormData = result.data;
-      this.inputDataSource(result.data.DetailList, 'popup');
+      this.inputDataSource(result.data.soDetailList, 'popup');
     }
   }
 
@@ -361,7 +385,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
     // if (popData.isValid) {
     //   let result;
-    //   this.popupFormData.soDetailList = detailList;
+    //   this.popupFormData.SoDetailList = detailList;
 
     //   if (this.popupGrid.instance.getVisibleRows().length === 0) {
     //     this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert('so_so_popupGridTitle')));
@@ -446,64 +470,64 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     return result.success;
   }
 
-  // async collectDetail(changes: any): Promise<any[]> {
-  //   const detailList: any[] = [];
+  async collectDetail(changes: any): Promise<any[]> {
+    const detailList: any[] = [];
 
-  //   for (const rowIndex in changes) {
-  //     // Insert일 경우 UUID가 들어가 있기 때문에 Null로 매핑한다.
-  //     if (changes[rowIndex].type === 'insert') {
-  //       detailList.push(Object.assign({ operType: changes[rowIndex].type, uid: null }, changes[rowIndex].data));
-  //     } else if (changes[rowIndex].type === 'remove') {
-  //       detailList.push(
-  //         Object.assign(
-  //           { operType: changes[rowIndex].type, uid: changes[rowIndex].key }, changes[rowIndex].data
-  //         )
-  //       );
-  //     } else {
-  //       detailList.push(
-  //         Object.assign(
-  //           { operType: changes[rowIndex].type, uid: changes[rowIndex].key }, changes[rowIndex].data
-  //         )
-  //       );
-  //     }
-  //   }
-  //   return detailList;
-  // }
+    for (const rowIndex in changes) {
+      // Insert일 경우 UUID가 들어가 있기 때문에 Null로 매핑한다.
+      if (changes[rowIndex].type === 'insert') {
+        detailList.push(Object.assign({ operType: changes[rowIndex].type, uid: null }, changes[rowIndex].data));
+      } else if (changes[rowIndex].type === 'remove') {
+        detailList.push(
+          Object.assign(
+            { operType: changes[rowIndex].type, uid: changes[rowIndex].key }, changes[rowIndex].data
+          )
+        );
+      } else {
+        detailList.push(
+          Object.assign(
+            { operType: changes[rowIndex].type, uid: changes[rowIndex].key }, changes[rowIndex].data
+          )
+        );
+      }
+    }
+    return detailList;
+  }
 
   onSelectionChangedCompany(e): void {  // 거래처 코드
-    // const companyData = [...this.dsCompany].filter(el => el.uid === e.value);
+    const companyData = [...this.dsCompany].filter(el => el.uid === e.value);
 
-    // if (companyData.length > 0) {
+    if (companyData.length > 0) {
 
-    //   if (this.popup.visible && this.changedCompanyCheck) {
-    //     const formList = ['refName', 'email', 'phone', 'countrycd', 'port', 'zip', 'address1', 'address2'];
+      if (this.popup.visible && this.changedCompanyCheck) {
+        const formList = ['refName', 'email', 'phone', 'countrycd', 'port', 'zip', 'address1', 'address2'];
 
-    //     if (!e.value) {
+        if (!e.value) {
 
-    //       formList.forEach(el => {
-    //         this.popupFormData[el] = null;
-    //       });
-    //     } else {
+          formList.forEach(el => {
+            this.popupFormData[el] = null;
+          });
+        } else {
 
-    //       formList.forEach(el => {
+          formList.forEach(el => {
 
-    //         if (!companyData[0][el === 'phone' ? 'phone1' : el]) {
-    //           this.popupFormData[el] = null;
-    //         } else {
-    //           this.popupFormData[el] = companyData[0][el === 'phone' ? 'phone1' : el];
-    //         }
-    //       });
-    //     }
-    //   }
-    // }
+            if (!companyData[0][el === 'phone' ? 'phone1' : el]) {
+              this.popupFormData[el] = null;
+            } else {
+              this.popupFormData[el] = companyData[0][el === 'phone' ? 'phone1' : el];
+            }
+          });
+        }
+      }
+    }
   }
 
   onFocusedCellChangedPopupGrid(e): void {
-    // this.setFocusRow(e.rowIndex);
+    this.setFocusRow(e.rowIndex);
   }
 
   setFocusRow(index): void {
-    // this.popupGrid.focusedRowIndex = index;
+    this.popupGrid.focusedRowIndex = index;
   }
 
   onReset(): void {
@@ -520,8 +544,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     form.formData = {
       tenant: this.G_TENANT,
       sts: '100',
-      // fromShipSchDate: rangeDate.fromDate,
-      // toShipSchDate: rangeDate.toDate,
       warehouseId: this.utilService.getCommonWarehouseId(),
       ownerId: this.utilService.getCommonOwnerId()
     };
@@ -529,8 +551,8 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   }
 
   setItemAdminValue(rowData: any, value: any): void {
-    // rowData.itemAdminId = value;
-    // rowData.itemId = null;
+    rowData.itemAdminId = value;
+    rowData.itemId = null;
   }
 
   getFilteredItemId(options): any {
@@ -565,17 +587,17 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   }
 
   setIsSerial(row: any, value: any): void {
-    // row.itemId = value;
-    // row.unit = value;
-    // row.isSerial = this.dsItemId.filter(el => el.uid === value)[0].isSerial;
+    row.itemId = value;
+    row.unit = value;
+    row.isSerial = this.dsItemId.filter(el => el.uid === value)[0].isSerial;
   }
 
   onSelectionChangedCountry(e): void {
-    // this.dsPort = this.copyPort.filter(el => el.etcColumn1 === e.value);
+    this.dsPort = this.copyPort.filter(el => el.etcColumn1 === e.value);
   }
 
   onSoTypeChanged(e): void {
-    // this.popupGrid.instance.cancelEditData();
+    this.popupGrid.instance.cancelEditData();
   }
 
   // phone 커서 위치

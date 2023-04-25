@@ -106,7 +106,6 @@ export class SoServSoexpected2Serviceice {
     }
   }
 }
-
 export interface searchVO {
   tenant: string;
   sts: string;
@@ -131,10 +130,13 @@ export interface searchVO {
   zip: string;
   address1: string;
   address2: string;
-  DetailList: DetailVO[];
+  soDetailList: SoDetailVO[];
+  createdBy: number;
 }
-
 export interface DetailVO {
+  uid: number;
+}
+export interface SoDetailVO {
   uid: number;
   tenant: string;
   operType: string;
@@ -160,5 +162,6 @@ export interface DetailVO {
   taxFlg: string;
   whInDate: string;
   mngDate: string;
+
 }
 
