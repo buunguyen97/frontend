@@ -34,13 +34,13 @@ export class Soexpected2Service {
   }
 
   // 조회함수(디테일포함)
-  async getRcvFull(searchData: {}): Promise<ApiResult<RcvExpectedVO>> {
+  async getSoFull(searchData: {}): Promise<ApiResult<SearchVO>> {
     // 조회 Api 설정
-    const baseUrl = `${this.httpUrl}/findRcvFull`;
+    const baseUrl = `${this.httpUrl}/findSoFull`;
 
     try {
       // Post 방식으로 조회
-      const result = await this.http.post<ApiResult<RcvExpectedVO>>(baseUrl, searchData).toPromise();
+      const result = await this.http.post<ApiResult<SearchVO>>(baseUrl, searchData).toPromise();
       return result;
     } catch (e) {
       return {
@@ -151,31 +151,20 @@ export interface SearchVO {
   shipSchDate:string;
   soType:string;
 
-  rcvDetailList: RcvDetailVO[];
+  soDetailList: SoDetailVO[];
 }
 
-export interface RcvDetailVO {
+export interface SoDetailVO {
   tenant: string;
 
   uid: number;
-  rcvId: number;
-  supplierRcvLineNo: number;
-  xDockFlg: number;
-  poId: number;
-  poDetailId: number;
-  poTypecd: string;
-  ownerPoNo: string;
-  ownerPoLineNo: number;
-  originalPoNo: string;
+  soId: number;
+  orderDetailId: number;
+  ownerOrderLineNo: number;
+  custOrderLineNo: number;
   originalPoLineNo: number;
-  poDate: Date;
-
-  ownerId: number;
   itemAdminId: number;
   itemId: number;
-  unit1Stylecd: string;
-  unit2Stylecd: string;
-  unit3Stylecd: string;
   ifItem: string;
 
   lot1: string;
@@ -188,11 +177,11 @@ export interface RcvDetailVO {
   lot8: string;
   lot9: string;
   lot10: string;
-  damageFlg: boolean;
-  noShippingFlg: boolean;
-  foreignCargoFlg: boolean;
-  customsReleaseFlg: boolean;
-  taxFlg: boolean;
+  damageFlg: number;
+  noShippingFlg: number;
+  foreignCargoFlg: number;
+  customsReleaseFlg: number;
+  taxFlg: number;
   whInDate: Date;
   mngDate: Date;
 
@@ -200,54 +189,40 @@ export interface RcvDetailVO {
   expectQty2: number;
   expectQty3: number;
 
-  receivedQty1: number;
-  receivedQty2: number;
-  receivedQty3: number;
-
-  adjustQty1: number;
-  adjustQty2: number;
-  adjustQty3: number;
-
-  rcvTagQty1: number;
-
-  xDockFreeQty1: number;
+  xDockQty1: number;
+  allocQty1: number;
+  pickedQty1: number;
+  sortedQty1: number;
 
   inspectedQty1: number;
   inspectedQty2: number;
   inspectedQty3: number;
 
+  shippedQty1: number;
+  shippedQty2: number;
+  shippedQty3: number;
+
+  adjustQty1: number;
+  adjustQty2: number;
+  adjustQty3: number;
+
   priceBuy: number;
   priceWholeSale: number;
   priceSale: number;
 
-  icDate: Date;
-
-  orderNo: string;
-
-  orderLineNo: number;
-
-  ownerOrderNo: string;
-
-  ownerOrderLineNo: number;
-
-  custOrderNo: string;
-
-  custOrderLineNo: number;
-
-  orderTypecd: string;
-
-  rcvQtyErrorFlg: number;
-
+  lotReserveFlg: number;
+  pirckQtyErrorFlg: number;
   logicFlg1: number;
   logicFlg2: number;
   logicFlg3: number;
 
-  checkLastLotFlg: number;
-
-  moveId: number;
+  xDockFlg: number;
   moveDetailId: number;
   assyDetailId: number;
-  produceDetailId: number;
 
   tagQty: number;
+  isSerial: string;
+
+  vehicleArrangeKey: string;
+  deliveryType: string;
 }

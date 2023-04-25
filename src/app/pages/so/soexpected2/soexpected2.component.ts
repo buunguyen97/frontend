@@ -28,6 +28,10 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   dsSoStatus = [];
   dsDeliveryType = [];
   dsPort = [];
+  dsYN = [];
+  dsDamageFlg = [];
+  dsUnit = [];
+  dsItemAdmin = [];
   // summary
   searchList = [];
 
@@ -119,7 +123,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     // 창고
     this.codeService.getCommonWarehouse(Number(this.utilService.getUserUid())).subscribe(result => {
       this.dsWarehouse = result.data;
-      console.log('dsWarehouse', this.dsWarehouse);
       this.mainForm.instance.getEditor('warehouseId').option('value', this.utilService.getCommonWarehouseId());
     });
     this.codeService.getCommonOwner(Number(this.utilService.getUserUid())).subscribe(result => {
@@ -138,6 +141,22 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.codeService.getCode(this.G_TENANT, 'YN').subscribe(result => {
       this.dsActFlg = result.data;
     });
+    this.codeService.getCode(this.G_TENANT, 'YN').subscribe(result => {
+      this.dsYN = result.data;
+    });
+    this.codeService.getCode(this.G_TENANT, 'DAMAGEFLG').subscribe(result => {
+      this.dsDamageFlg = result.data;
+    });
+    this.codeService.getCode(this.G_TENANT, 'UNITSTYLE').subscribe(result => {
+      this.dsUnit = result.data;
+    });
+    this.codeService.getItemAdmin(this.G_TENANT).subscribe(result => {
+      this.dsItemAdmin = result.data;
+      console.log('dsItemAdmin',    this.dsItemAdmin);
+      console.log('dsItemAdmin',    this.utilService.getCommonItemAdminId());
+    });
+
+
   }
   initData(form): void {
     const rangeDate = this.utilService.getDateRange();
@@ -224,9 +243,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   async onSearchPopup(): Promise<void> {
     if (this.popupData.uid) {
       // Service의 get 함수 생성
-      const result = await this.service.getRcvFull(this.popupData);
-
-      // console.log(result);
+      const result = await this.service.getSoFull(this.popupData);
       if (!result.success) {
         this.utilService.notify_error(result.msg);
         return;
@@ -238,7 +255,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
         this.popupEntityStore = new ArrayStore(
           {
-            data: result.data.rcvDetailList,
+            data: result.data.soDetailList,
             key: this.key
           }
         );
@@ -247,13 +264,13 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
         });
         this.popupGrid.focusedRowKey = null;
         this.popupGrid.paging.pageIndex = 0;
+
       }
     }
   }
 
   // 추가버튼 이벤트
   addClick(): void {
-
     // 입고상태가 예정이 아닐 경우 return
     if (this.popupData.sts !== SoCommonUtils.STS_IDLE) {
       return;
@@ -261,8 +278,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.popupGrid.instance.addRow().then(r => {
       const rowIdx = this.popupGrid.instance.getRowIndexByKey(this.changes[this.changes.length - 1].key);
       this.setFocusRow(rowIdx, this.popupGrid);
-      console.log(rowIdx);
-      console.log(this.changes);
     });
   }
 
@@ -270,8 +285,12 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   popupCancelClick(e): void {
     this.popupVisible = false;
     this.popupForm.instance.resetValues();
-
     // 재조회
+    this.onSearch();
+  }
+  onPopupAfterClose(): void {
+    this.popupForm.instance.resetValues();
+    this.popupGrid.instance.cancelEditData();
     this.onSearch();
   }
 
@@ -295,12 +314,12 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
       this.popupData.actFlg = 'Y';
 
     } else {
-      this.popupForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
+      // this.popupForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
 
     }
 
-    this.popupData.logisticsId = 1;
-    this.popupData.companyId = 1;
+    // this.popupData.logisticsId = 1;
+    // this.popupData.companyId = 1;
 
     // mới thêm tăng chiều cao cho cacs item
     this.utilService.setPopupGridHeight(this.popup, this.popupForm, this.popupGrid);
@@ -348,8 +367,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
   // 저장버튼 이벤트
   async popupSaveClick(e): Promise<void> {
-
-    console.log(this.changes);
     const confirmMsg = this.utilService.convert('confirmSave', this.utilService.convert1('rcvTx', '입고전표'));
     if (!await this.utilService.confirm(confirmMsg)) {
       return;
@@ -426,13 +443,11 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
           );
         }
 
-        saveContent.rcvDetailList = detailList;
+        saveContent.soDetailList = detailList;
 
         if (this.popupMode === 'Add') {
-          console.log('add', saveContent);
           result = await this.service.save(saveContent);
         } else {
-          console.log('bbbb', saveContent);
           result = await this.service.update(saveContent);
         }
         if (!result.success) {
@@ -475,7 +490,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
         );
       }
     }
-    console.log('gridList:', gridList);
     return gridList;
   }
 
@@ -491,7 +505,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     // e.data.receivedQty1 = 0;
     // e.data.adjustQty1 = 0;
     e.data.whInDate = this.gridUtil.getToday();
-    console.log(e.data);
   }
 
   // 삭제버튼 이벤트
@@ -518,11 +531,27 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.gridUtil.onOptionChangedForSummary(e, this); // 합계 계산
   }
   onChangedCompany(e): void {
-     const companyData = [...this.dsCompany].filter(el => el.uid === e.value);
-    if (companyData.length > 0) {
+    const filtered = this.dsCompany.filter(el => el.uid === e.value);
+    if (filtered.length > 0) {
+      const data = filtered[0];
+      this.popupForm.instance.getEditor('shipToId').option('value', data.shipToId);
+      this.popupForm.instance.getEditor('countrycd').option('value', data.countrycd);
+      this.popupForm.instance.getEditor('port').option('value', data.port);
+      this.popupForm.formData.countrycd = data.countrycd;
+      this.popupForm.formData.port = data.port;
+      this.popupForm.formData.zip = data.zip;
+      this.popupForm.formData.address1 = data.address1;
+      this.popupForm.formData.refName = data.refName;
+      this.popupForm.formData.address2 = data.address2;
+      this.popupForm.formData.phone = data.phone1;
+      this.popupForm.formData.email = data.email;
 
     }
 
+  }
+  setItemAdminValue(rowData: any, value: any): void {
+    rowData.itemAdminId = value;
+    rowData.itemId = null;
   }
 
 }
