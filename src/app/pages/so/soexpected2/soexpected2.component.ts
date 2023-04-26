@@ -494,9 +494,10 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     }
     return detailList;
   }
-
+  //check mã CompanyID 
   onSelectionChangedCompany(e): void {  // 거래처 코드
     const companyData = [...this.dsCompany].filter(el => el.uid === e.value);
+    console.log(companyData)
 
     if (companyData.length > 0) {
 
@@ -557,6 +558,8 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   }
 
   getFilteredItemId(options): any {
+    console.log(this.popupFormData)
+    console.log(this.popupFormData.soType)
     const filterSoType = this.dsSoType.filter(el => el.code === this.popupFormData.soType);
 
     const filter = [];
@@ -586,11 +589,12 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
       // filter: options.data ? ['itemAdminId', '=', this.utilService.getCommonItemAdminId()] : null
     };
   }
-
+  //lấy id cho itemId
   setIsSerial(row: any, value: any): void {
     row.itemId = value;
     row.unit = value;
     row.isSerial = this.dsItemId.filter(el => el.uid === value)[0].isSerial;
+    console.log(row.isSerial)
   }
 
   onSelectionChangedCountry(e): void {
