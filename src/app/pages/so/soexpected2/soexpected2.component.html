@@ -456,12 +456,17 @@
           </dxi-validation-rule>
         </dxi-item>
         <!-- shipDate -->
-        <dxi-item [disabled]="true"
-                  [editorOptions]="{ useMaskBehavior:'true', displayFormat:'yyyy-MM-dd', dateSerializationFormat: 'yyyy-MM-dd'}"
-                  [label]="{text: utilService.convert1('so_sodirectship_fromShipDate', '출고실적일')}"
-                  dataField="shipDate"
-                  editorType="dxDateBox">
+        <dxi-item
+          [editorOptions]="{  onValueChanged: onShipSchDateChanged,useMaskBehavior: 'true', displayFormat: 'yyyy-MM-dd', dateSerializationFormat: 'yyyy-MM-dd' }"
+          [label]="{ text: utilService.convert1('so_so_shipSchDate', '출고예정일') }"
+          dataField="shipSchDate"
+          editorType="dxDateBox">
+          <dxi-validation-rule
+            [message]="utilService.convert('com_valid_required', utilService.convert('so_so_shipSchDate'))"
+            type="required">
+          </dxi-validation-rule>
         </dxi-item>
+
         <!-- warehouseId -->
         <dxi-item [editorOptions]="{  items: dsWarehouse,
                                       displayExpr: 'display',
@@ -707,19 +712,19 @@
             <dxi-validation-rule type="required"></dxi-validation-rule>
           </dxi-column>
           <!-- allocQty1 -->
-          <dxi-column [caption]="utilService.convert1('so_so_allocQty1', '할당수량')" [editorOptions]="{disabled: true}"
+          <dxi-column [caption]="utilService.convert1('so_so_allocQty1', '할당수량')"
                       dataField="allocQty1" dataType="number"
                       format="#,##0.####"></dxi-column>
           <!-- pickedQty1 -->
-          <dxi-column [caption]="utilService.convert1('so_so_pickedQty1', '피킹수량')" [editorOptions]="{disabled: true}"
+          <dxi-column [caption]="utilService.convert1('so_so_pickedQty1', '피킹수량')"
                       dataField="pickedQty1" dataType="number"
                       format="#,##0.####"></dxi-column>
           <!-- shippedQty1 -->
-          <dxi-column [caption]="utilService.convert1('so_so_shippedQty1', '실적수량')" [editorOptions]="{disabled: true}"
+          <dxi-column [caption]="utilService.convert1('so_so_shippedQty1', '실적수량')"
                       dataField="shippedQty1" dataType="number"
                       format="#,##0.####"></dxi-column>
           <!-- adjustQty1 -->
-          <dxi-column [caption]="utilService.convert1('so_so_adjustQty1', '조정수량')" [editorOptions]="{disabled: true}"
+          <dxi-column [caption]="utilService.convert1('so_so_adjustQty1', '조정수량')"
                       dataField="adjustQty1" dataType="number"
                       format="#,##0.####"></dxi-column>
           <!-- lotReserveFlg -->

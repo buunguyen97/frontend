@@ -83,6 +83,8 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.setIsSerial = this.setIsSerial.bind(this);
     this.onChangedCountry = this.onChangedCountry.bind(this);
     this.onChangedCompany = this.onChangedCompany.bind(this);
+    this.popupShown = this.popupShown.bind(this);
+    this.onShipSchDateChanged = this.onShipSchDateChanged.bind(this);
   }
 
   ngAfterViewInit(): void {
@@ -307,7 +309,10 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   }
 
   popupShown(e): void {
-    if (this.popupData.sts !== '100') {
+    if (this.popupData.sts === '100') {
+      this.saveBtn.visible = true;
+    } else {
+      this.saveBtn.visible = false;
       this.deleteBtn.visible = false;
     }
     if (this.popupMode === 'Add') {
@@ -321,6 +326,17 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
       this.popupData.actFlg = 'Y';
     }
     this.utilService.setPopupGridHeight(this.popup, this.popupForm, this.popupGrid);
+  }
+
+  onShipSchDateChanged(event: any) {
+    console.log('Ship sch date changed:', event.value);
+    // Do something when ship sch date changes
+
+    const selectedDate = new Date(event.value);
+    const currentDate = new Date();
+    if (selectedDate < currentDate) {
+      alert('error');
+    }
   }
 
   // 신규버튼 이벤트
