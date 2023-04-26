@@ -542,8 +542,7 @@
                                       openOnFieldClick: false,
                                       minSearchLength: 0,
                                       placeholder: '',
-                                      noDataText: utilService.convert('com_txt_noDataText'),
-                                      onValueChanged: onChangedCompany
+                                      noDataText: utilService.convert('com_txt_noDataText')
                                    }"
                   [label]="{text: utilService.convert1('so_so_companyId', '거래처')}"
                   dataField="companyId"
@@ -579,7 +578,8 @@
                                       openOnFieldClick: false,
                                       minSearchLength: 0,
                                       placeholder: '',
-                                      noDataText: utilService.convert('com_txt_noDataText')
+                                      noDataText: utilService.convert('com_txt_noDataText'),
+                                     onValueChanged: onChangedCountry
                                      }"
                   [label]="{text: utilService.convert1('so_so_countrycd', '국가')}"
                   dataField="countrycd"
@@ -619,7 +619,6 @@
           <dxi-validation-rule [message]="utilService.convert1('mm_company_email_vali', 'email 형식에 맞지 않습니다.')"
                                type="email"></dxi-validation-rule>
         </dxi-item>
-        <!-- <dxi-item dataField="logisticsId" [label]="{text: 'LogisticsId'}" [visible]="false"></dxi-item> -->
 
 
       </dxi-item>
@@ -819,12 +818,6 @@
                       format="yyyy-MM-dd">
           </dxi-column>
           <!-- isSerial -->
-          <dxi-column [caption]="utilService.convert1('so_so_serial', '시리얼')" alignment="center" dataField="isSerial">
-            <dxo-lookup [dataSource]="dsYN"
-                        displayExpr="codeName"
-                        valueExpr="code">
-            </dxo-lookup>
-          </dxi-column>
           <!-- createdBy -->
           <dxi-column [allowEditing]="false" [caption]="utilService.convert('com_text_createdBy')"
                       [visible]=this.utilService.isShowVisibleColumn

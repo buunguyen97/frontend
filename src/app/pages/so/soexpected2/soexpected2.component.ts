@@ -31,6 +31,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   dsDamageFlg = [];
   dsUnit = [];
   dsItemAdmin = [];
+  dsAllPort = [];
   // summary
   searchList = [];
 
@@ -79,9 +80,9 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.popupDeleteClick = this.popupDeleteClick.bind(this);
     this.popupSaveClick = this.popupSaveClick.bind(this);
     this.calculateCustomSummary = this.calculateCustomSummary.bind(this);
-    this.onChangedCompany = this.onChangedCompany.bind(this);
     this.getFilteredItemId = this.getFilteredItemId.bind(this);
     this.setIsSerial = this.setIsSerial.bind(this);
+    this.onChangedCountry = this.onChangedCountry.bind(this);
   }
 
   ngAfterViewInit(): void {
@@ -153,10 +154,14 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     });
     this.codeService.getItemAdmin(this.G_TENANT).subscribe(result => {
       this.dsItemAdmin = result.data;
-      console.log('dsItemAdmin', this.dsItemAdmin);
-      console.log('dsItemAdmin', this.utilService.getCommonItemAdminId());
     });
-
+    this.codeService.getItem(this.G_TENANT).subscribe(result => {
+      this.dsItemId = result.data;
+    });
+    // 항구
+    this.codeService.getCode(this.G_TENANT, 'PORT').subscribe(result => {
+      this.dsAllPort = result.data;
+    });
 
   }
 
@@ -236,6 +241,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.popupVisible = true;
     if (popupMode !== 'Add') {
       this.onSearchPopup();
+      this.dsPort = this.dsAllPort.filter(el => el.etcColumn1 === data.countrycd);
     }
 
   }
@@ -308,15 +314,14 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     }
 
     if (this.popupMode === 'Add') {
-
       this.popupData.sts = '100';
       this.popupData.deliveryType = 'OUTER';
       this.popupData.shipSchDate = this.utilService.getFormatDate(new Date());
       this.popupData.warehouseId = this.utilService.getCommonWarehouseId();
+      this.popupData.logisticsId = this.utilService.getCommonWarehouseVO().logisticsId;
       this.popupData.ownerId = this.utilService.getCommonOwnerId();
       this.popupData.soType = 'RENT';
       this.popupData.actFlg = 'Y';
-
     }
     this.utilService.setPopupGridHeight(this.popup, this.popupForm, this.popupGrid);
   }
@@ -373,30 +378,12 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
       return;
     }
 
-    // 선택한 화주를 품목에 세팅
-    const items = this.popupDataSource.items() || [];
-
-    const ownerId = this.popupForm.instance.getEditor('ownerId').option('value');
-    console.dir('ataa', this.popupForm.formData);
-
-    for (const item of this.changes) {
-      if (item.type !== 'remove') {
-        item.data.ownerId = ownerId;
-      }
-    }
-
-    for (const item of items) {
-      const rowIdx = this.popupGrid.instance.getRowIndexByKey(item.uid);
-      this.popupGrid.instance.cellValue(rowIdx, 'ownerId', ownerId);
-    }
-
     const messages = {
-      temAdminId: 'rcvDetail.itemAdminId',
-      itemId: 'rcvDetail.itemId',
-      expectQty1: 'rcvDetail.expectQty1',
-      whInDate: 'rcvDetail.whInDate'
+      itemAdminId: 'soDetail.itemAdminId',
+      itemId: 'soDetail.itemId',
+      expectQty1: 'soDetail.expectQty1',
     };
-    const columns = ['itemAdminId', 'itemId', 'expectQty1', 'whInDate'];    // required 컬럼 dataField 정의
+    const columns = ['itemAdminId', 'itemId', 'expectQty1'];    // required 컬럼 dataField 정의
     const popData = this.popupForm.instance.validate();
     if (popData.isValid) {
       try {
@@ -436,6 +423,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
           );
         }
 
+
         saveContent.soDetailList = detailList;
 
         if (this.popupMode === 'Add') {
@@ -444,7 +432,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
           result = await this.service.update(saveContent);
         }
         if (!result.success) {
-          alert(2);
           this.utilService.notify_error(result.msg);
           return;
         } else {
@@ -459,7 +446,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     }
   }
 
-  // Them hoac xoa dong
   collectGridData(changes: any): any[] {
     const gridList = [];
     for (const rowIndex in changes) {
@@ -526,26 +512,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.gridUtil.onOptionChangedForSummary(e, this); // 합계 계산
   }
 
-  onChangedCompany(e): void {
-    const filtered = this.dsCompany.filter(el => el.uid === e.value);
-    if (filtered.length > 0) {
-      const data = filtered[0];
-      this.popupForm.instance.getEditor('shipToId').option('value', data.shipToId);
-      this.popupForm.instance.getEditor('countrycd').option('value', data.countrycd);
-      this.popupForm.instance.getEditor('port').option('value', data.port);
-      this.popupForm.formData.countrycd = data.countrycd;
-      this.popupForm.formData.port = data.port;
-      this.popupForm.formData.zip = data.zip;
-      this.popupForm.formData.address1 = data.address1;
-      this.popupForm.formData.refName = data.refName;
-      this.popupForm.formData.address2 = data.address2;
-      this.popupForm.formData.phone = data.phone1;
-      this.popupForm.formData.email = data.email;
-
-    }
-
-  }
-
   setItemAdminValue(rowData: any, value: any): void {
     rowData.itemAdminId = value;
     rowData.itemId = null;
@@ -553,7 +519,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
   getFilteredItemId(options): any {
     const filterSoType = this.dsSoType.filter(el => el.code === this.popupData.soType);
-
     const filter = [];
     filter.push(['itemAdminId', '=', this.utilService.getCommonItemAdminId()]);
 
@@ -586,5 +551,9 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     row.itemId = value;
     row.unit = value;
     row.isSerial = this.dsItemId.filter(el => el.uid === value)[0].isSerial;
+  }
+
+  onChangedCountry(e): void {
+    this.dsPort = this.dsAllPort.filter(data => data.etcColumn1 === e.value);
   }
 }

@@ -1,8 +1,7 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 import {APPCONSTANTS} from '../../../shared/constants/appconstants';
 import {JHttpService} from '../../../shared/services/jhttp.service';
 import {ApiResult} from '../../../shared/vo/api-result';
-import {RcvExpectedVO} from '../../rcv/rcvexpected/rcvexpected.service';
 
 @Injectable({
   providedIn: 'root'
@@ -54,7 +53,7 @@ export class Soexpected2Service {
 
   async save(data: {}): Promise<ApiResult<SearchVO[]>> {
     // 조회 Api 설정
-    const baseUrl = `${this.httpUrl}/saveRcvExpected`;
+    const baseUrl = `${this.httpUrl}/saveSo`;
 
     try {
       // Post 방식으로 조회
@@ -72,7 +71,7 @@ export class Soexpected2Service {
 
   async update(data: {}): Promise<ApiResult<SearchVO[]>> {
     // 조회 Api 설정
-    const baseUrl = `${this.httpUrl}/updateRcvExpected`;
+    const baseUrl = `${this.httpUrl}/updateSo`;
 
     try {
       // Post 방식으로 조회
@@ -90,7 +89,7 @@ export class Soexpected2Service {
 
   async delete(data: SearchVO): Promise<ApiResult<void>> {
     // 조회 Api 설정
-    const baseUrl = `${this.httpUrl}/deleteRcvExpected`;
+    const baseUrl = `${this.httpUrl}/deleteSo`;
 
     try {
       // Post 방식으로 조회
@@ -148,8 +147,8 @@ export interface SearchVO {
   ownerId: number;      // 화주
 
   deliveryType: string;
-  shipSchDate:string;
-  soType:string;
+  shipSchDate: string;
+  soType: string;
 
   soDetailList: SoDetailVO[];
 }
