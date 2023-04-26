@@ -351,7 +351,7 @@ export class SoComponent implements OnInit, AfterViewInit {
 
   changeDisabled(type, sts): void {
     const editorList = ['soType', 'shipSchDate', 'deliveryType', 'remarks',
-      'companyId',  'countrycd', 'port', 'refName', 'phone', 'zip', 'email', 'address1', 'address2'];
+      'companyId', 'countrycd', 'port', 'refName', 'phone', 'zip', 'email', 'address1', 'address2'];
     // 'shipToId',
 
     if (type) { // type Add, Edit
@@ -563,6 +563,7 @@ export class SoComponent implements OnInit, AfterViewInit {
   }
 
   getFilteredItemId(options): any {
+    console.log(this.popupFormData)
     const filterSoType = this.dsSoType.filter(el => el.code === this.popupFormData.soType);
 
     const filter = [];
