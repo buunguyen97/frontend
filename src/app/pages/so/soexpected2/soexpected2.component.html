@@ -446,7 +446,12 @@
         </dxi-item>
         <!-- shipSchDate -->
         <dxi-item
-          [editorOptions]="{ useMaskBehavior:'true', displayFormat:'yyyy-MM-dd', dateSerializationFormat: 'yyyy-MM-dd'}"
+          [editorOptions]="{
+                                useMaskBehavior:'true',
+                                displayFormat:'yyyy-MM-dd',
+                                dateSerializationFormat: 'yyyy-MM-dd',
+                                 onValueChanged: onChangedshipSchDate
+                                }"
           [label]="{text: utilService.convert1('so_so_shipSchDate', '출고예정일')}"
           dataField="shipSchDate"
           editorType="dxDateBox">
@@ -456,15 +461,9 @@
           </dxi-validation-rule>
         </dxi-item>
         <!-- shipDate -->
-        <dxi-item
-          [editorOptions]="{  onValueChanged: onShipSchDateChanged,useMaskBehavior: 'true', displayFormat: 'yyyy-MM-dd', dateSerializationFormat: 'yyyy-MM-dd' }"
-          [label]="{ text: utilService.convert1('so_so_shipSchDate', '출고예정일') }"
-          dataField="shipSchDate"
-          editorType="dxDateBox">
-          <dxi-validation-rule
-            [message]="utilService.convert('com_valid_required', utilService.convert('so_so_shipSchDate'))"
-            type="required">
-          </dxi-validation-rule>
+        <dxi-item dataField="shipDate" editorType="dxDateBox" [colSpan]="2" [disabled]="true"
+                  [label]="{text: utilService.convert1('so_sodirectship_fromShipDate', '출고실적일')}"
+                  [editorOptions]="{ useMaskBehavior:'true', displayFormat:'yyyy-MM-dd', dateSerializationFormat: 'yyyy-MM-dd'}">
         </dxi-item>
 
         <!-- warehouseId -->

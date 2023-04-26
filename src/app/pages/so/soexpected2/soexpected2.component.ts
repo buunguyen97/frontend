@@ -83,8 +83,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.setIsSerial = this.setIsSerial.bind(this);
     this.onChangedCountry = this.onChangedCountry.bind(this);
     this.onChangedCompany = this.onChangedCompany.bind(this);
-    this.popupShown = this.popupShown.bind(this);
-    this.onShipSchDateChanged = this.onShipSchDateChanged.bind(this);
+    this.onChangedshipSchDate = this.onChangedshipSchDate.bind(this);
   }
 
   ngAfterViewInit(): void {
@@ -309,12 +308,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   }
 
   popupShown(e): void {
-    if (this.popupData.sts === '100') {
-      this.saveBtn.visible = true;
-    } else {
-      this.saveBtn.visible = false;
-      this.deleteBtn.visible = false;
-    }
     if (this.popupMode === 'Add') {
       this.popupData.sts = '100';
       this.popupData.deliveryType = 'OUTER';
@@ -324,23 +317,20 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
       this.popupData.ownerId = this.utilService.getCommonOwnerId();
       this.popupData.soType = 'RENT';
       this.popupData.actFlg = 'Y';
+      this.saveBtn.visible = true;
+    }
+
+    if (this.popupData.sts !== '100') {
+      this.deleteBtn.visible = false;
+      this.saveBtn.visible = false;
     }
     this.utilService.setPopupGridHeight(this.popup, this.popupForm, this.popupGrid);
   }
 
-  onShipSchDateChanged(event: any) {
-    console.log('Ship sch date changed:', event.value);
-    // Do something when ship sch date changes
-
-    const selectedDate = new Date(event.value);
-    const currentDate = new Date();
-    if (selectedDate < currentDate) {
-      alert('error');
-    }
-  }
 
   // 신규버튼 이벤트
   async onNew(e): Promise<void> {
+    console.log(e);
     this.deleteBtn.visible = false;
     this.showPopup('Add', {...e.data});
   }
@@ -382,6 +372,15 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     if (!await this.utilService.confirm(confirmMsg)) {
       return;
     }
+
+
+    const selectedDate = new Date(this.popupData.shipSchDate);
+    const currentDate = new Date();
+    if (selectedDate < currentDate) {
+      this.utilService.notify_error('Selected date after today' );
+      return;
+    }
+
 
     // 상품목록 추가여부
     if ((this.popupGrid.instance.totalCount() + this.changes.length) === 0) {
@@ -570,6 +569,9 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.dsPort = this.dsAllPort.filter(data => data.etcColumn1 === e.value);
   }
 
+  onChangedshipSchDate(e): void {
+
+  }
   onChangedCompany(e): void {
     const filtered = this.dsCompany.filter(el => el.uid === e.value);
     if (filtered.length > 0) {
