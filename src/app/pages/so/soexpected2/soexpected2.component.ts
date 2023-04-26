@@ -92,7 +92,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     public gridUtil: GridUtilService
   ) {
     this.onSelectionChangedCountry = this.onSelectionChangedCountry.bind(this);
-    this.onSelectionChangedCompany = this.onSelectionChangedCompany.bind(this);
+    // this.onSelectionChangedCompany = this.onSelectionChangedCompany.bind(this);
     this.getFilteredItemId = this.getFilteredItemId.bind(this);
     this.setIsSerial = this.setIsSerial.bind(this);
     this.calculateCustomSummary = this.calculateCustomSummary.bind(this);
@@ -257,7 +257,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
       sts: '100',
       soType: COMMONINITSTR.SO_SOTYPE,
       warehouseId: this.utilService.getCommonWarehouseId(),
-      logisticsId: this.utilService.getCommonWarehouseVO().logisticsId,
+      // logisticsId: this.utilService.getCommonWarehouseVO().logisticsId,
       ownerId: this.utilService.getCommonOwnerId(),
       shipSchDate: this.utilService.getFormatDate(new Date()),
       deliveryType: 'OUTER'
@@ -346,38 +346,38 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   }
 
   changeDisabled(type, sts): void {
-    const editorList = ['soType', 'shipSchDate', 'deliveryType', 'remarks',
-      'companyId', 'countrycd', 'port', 'refName', 'phone', 'zip', 'email', 'address1', 'address2'];
-    // 'shipToId',
+    // const editorList = ['soType', 'shipSchDate', 'deliveryType', 'remarks',
+    //   'companyId', 'countrycd', 'port', 'refName', 'phone', 'zip', 'email', 'address1', 'address2'];
+    // // 'shipToId',
 
-    if (type) { // type Add, Edit
+    // if (type) { // type Add, Edit
 
-      if (sts === '100') {
-        this.popupGrid.editing.allowUpdating = true;
+    //   if (sts === '100') {
+    //     this.popupGrid.editing.allowUpdating = true;
 
-        editorList.forEach(el => {
-          this.popupForm.instance.getEditor(el).option('disabled', !type);
-        });
-        this.popupForm.instance.getEditor('soType').option('disabled', type);
+    //     editorList.forEach(el => {
+    //       this.popupForm.instance.getEditor(el).option('disabled', !type);
+    //     });
+    //     this.popupForm.instance.getEditor('soType').option('disabled', type);
 
-      } else {
+    //   } else {
 
-        this.popupGrid.editing.allowUpdating = false;
-        this.deleteBtn.visible = false;
+    //     this.popupGrid.editing.allowUpdating = false;
+    //     this.deleteBtn.visible = false;
 
-        editorList.forEach(el => {
-          this.popupForm.instance.getEditor(el).option('disabled', type);
-        });
-      }
-    } else {
-      this.popupGrid.editing.allowUpdating = false;
+    //     editorList.forEach(el => {
+    //       this.popupForm.instance.getEditor(el).option('disabled', type);
+    //     });
+    //   }
+    // } else {
+    //   this.popupGrid.editing.allowUpdating = false;
 
-      editorList.forEach(el => {
-        this.popupForm.instance.getEditor(el).option('disabled', type);
-      });
-    }
-    this.popupGrid.focusedRowKey = null;
-    this.popupGrid.paging.pageIndex = 0;
+    //   editorList.forEach(el => {
+    //     this.popupForm.instance.getEditor(el).option('disabled', type);
+    //   });
+    // }
+    // this.popupGrid.focusedRowKey = null;
+    // this.popupGrid.paging.pageIndex = 0;
   }
 
   async onPopupSave(): Promise<void> {
@@ -387,7 +387,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     if (popData.isValid) {
       let result;
       this.popupFormData.soDetailList = detailList;
-
       if (this.popupGrid.instance.getVisibleRows().length === 0) {
         this.utilService.notify_error(this.utilService.convert('com_valid_required', this.utilService.convert('so_so_popupGridTitle')));
         return;
@@ -495,34 +494,34 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     return detailList;
   }
   //check mã CompanyID 
-  onSelectionChangedCompany(e): void {  // 거래처 코드
-    const companyData = [...this.dsCompany].filter(el => el.uid === e.value);
-    console.log(companyData)
+  // onSelectionChangedCompany(e): void {  // 거래처 코드
+  //   const companyData = [...this.dsCompany].filter(el => el.uid === e.value);
+  //   console.log(companyData)
 
-    if (companyData.length > 0) {
+  //   if (companyData.length > 0) {
 
-      if (this.popup.visible && this.changedCompanyCheck) {
-        const formList = ['refName', 'email', 'phone', 'countrycd', 'port', 'zip', 'address1', 'address2'];
+  //     if (this.popup.visible && this.changedCompanyCheck) {
+  //       const formList = ['refName', 'email', 'phone', 'port', 'zip', 'address1', 'address2'];
 
-        if (!e.value) {
+  //       if (!e.value) {
 
-          formList.forEach(el => {
-            this.popupFormData[el] = null;
-          });
-        } else {
+  //         formList.forEach(el => {
+  //           this.popupFormData[el] = null;
+  //         });
+  //       } else {
 
-          formList.forEach(el => {
+  //         formList.forEach(el => {
 
-            if (!companyData[0][el === 'phone' ? 'phone1' : el]) {
-              this.popupFormData[el] = null;
-            } else {
-              this.popupFormData[el] = companyData[0][el === 'phone' ? 'phone1' : el];
-            }
-          });
-        }
-      }
-    }
-  }
+  //           if (!companyData[0][el === 'phone' ? 'phone1' : el]) {
+  //             this.popupFormData[el] = null;
+  //           } else {
+  //             this.popupFormData[el] = companyData[0][el === 'phone' ? 'phone1' : el];
+  //           }
+  //         });
+  //       }
+  //     }
+  //   }
+  // }
 
   onFocusedCellChangedPopupGrid(e): void {
     this.setFocusRow(e.rowIndex);
@@ -599,6 +598,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
   onSelectionChangedCountry(e): void {
     this.dsPort = this.copyPort.filter(el => el.etcColumn1 === e.value);
+    console.log(this.copyPort)
   }
 
   onSoTypeChanged(e): void {
