@@ -49,7 +49,7 @@
                     editorType="dxSelectBox">
           </dxi-item>
           <!--sts-->
-          <dxi-item [colSpan]="2" [editorOptions]="{  items: dsRcvStatus,
+          <dxi-item [colSpan]="2" [editorOptions]="{  items: dsSoStatus,
                                             displayExpr: 'display',
                                             valueExpr: 'code',
                                             searchMode:'contains',
@@ -234,7 +234,7 @@
         ></dxi-column>
         <!--        sts-->
         <dxi-column [caption]="utilService.convert1('so.sts', '출고상태')" alignment="center" dataField="sts">
-          <dxo-lookup [dataSource]=dsRcvStatus displayExpr="display" valueExpr="code"></dxo-lookup>
+          <dxo-lookup [dataSource]=dsSoStatus displayExpr="display" valueExpr="code"></dxo-lookup>
         </dxi-column>
         <!-- actFlg-->
         <dxi-column [caption]="utilService.convert1('so.actFlg', '사용여부')" alignment="center" dataField="actFlg"
@@ -406,7 +406,7 @@
         </dxi-item>
         <!-- sts -->
         <dxi-item [colSpan]="2" [disabled]="true"
-                  [editorOptions]="{  items: dsRcvStatus,
+                  [editorOptions]="{  items: dsSoStatus,
                                             displayExpr: 'display',
                                             valueExpr: 'code',
                                             searchMode:'contains',

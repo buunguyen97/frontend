@@ -17,7 +17,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   mainFormData: SearchVO = {} as SearchVO;
   G_TENANT: any;
   dsSoType = [];
-  dsRcvStatus = [];
   dsCompany = [];
   dsShipTo = [];
   dsWarehouse = [];
@@ -61,7 +60,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   @ViewChild('popupForm', {static: false}) popupForm: DxFormComponent;
 
 
-  GRID_STATE_KEY = 'rcv_rcv';
+  GRID_STATE_KEY = 'so_soexpected2';
   loadStateMain = this.gridUtil.fnGridLoadState(this.GRID_STATE_KEY + '_main');
   saveStateMain = this.gridUtil.fnGridSaveState(this.GRID_STATE_KEY + '_main');
   loadStatePopup = this.gridUtil.fnGridLoadState(this.GRID_STATE_KEY + '_popup');
@@ -111,7 +110,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.G_TENANT = this.utilService.getTenant();
 
     this.codeService.getCode(this.G_TENANT, 'SOSTATUS').subscribe(result => {
-      this.dsRcvStatus = result.data;
+      this.dsSoStatus = result.data;
       this.mainForm.instance.getEditor('sts').option('value', '100'); // 예정
     });
 
@@ -338,7 +337,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   // 삭제클릭 이벤트
   async popupDeleteClick(e): Promise<void> {
 
-    const confirmMsg = this.utilService.convert('confirmDelete', this.utilService.convert1('rcvTx', '입고전표'));
+    const confirmMsg = this.utilService.convert('confirmDelete', this.utilService.convert1('soTx', '입고전표'));
     if (!await this.utilService.confirm(confirmMsg)) {
       return;
     }
@@ -362,7 +361,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
   // 저장버튼 이벤트
   async popupSaveClick(e): Promise<void> {
-    const confirmMsg = this.utilService.convert('confirmSave', this.utilService.convert1('rcvTx', '입고전표'));
+    const confirmMsg = this.utilService.convert('confirmSave', this.utilService.convert1('soTx', '입고전표'));
     if (!await this.utilService.confirm(confirmMsg)) {
       return;
     }
