@@ -542,7 +542,8 @@
                                       openOnFieldClick: false,
                                       minSearchLength: 0,
                                       placeholder: '',
-                                      noDataText: utilService.convert('com_txt_noDataText')
+                                      noDataText: utilService.convert('com_txt_noDataText'),
+                                       onValueChanged: onChangedCompany
                                    }"
                   [label]="{text: utilService.convert1('so_so_companyId', '거래처')}"
                   dataField="companyId"

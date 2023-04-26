@@ -82,6 +82,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.getFilteredItemId = this.getFilteredItemId.bind(this);
     this.setIsSerial = this.setIsSerial.bind(this);
     this.onChangedCountry = this.onChangedCountry.bind(this);
+    this.onChangedCompany = this.onChangedCompany.bind(this);
   }
 
   ngAfterViewInit(): void {
@@ -551,5 +552,25 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
   onChangedCountry(e): void {
     this.dsPort = this.dsAllPort.filter(data => data.etcColumn1 === e.value);
+  }
+
+  onChangedCompany(e): void {
+    const filtered = this.dsCompany.filter(el => el.uid === e.value);
+    if (filtered.length > 0) {
+      const data = filtered[0];
+      this.popupForm.instance.getEditor('shipToId').option('value', data.shipToId);
+      this.popupForm.instance.getEditor('countrycd').option('value', data.countrycd);
+      this.popupForm.instance.getEditor('port').option('value', data.port);
+      this.popupForm.formData.countrycd = data.countrycd;
+      this.popupForm.formData.port = data.port;
+      this.popupForm.formData.zip = data.zip;
+      this.popupForm.formData.address1 = data.address1;
+      this.popupForm.formData.refName = data.refName;
+      this.popupForm.formData.address2 = data.address2;
+      this.popupForm.formData.phone = data.phone1;
+      this.popupForm.formData.email = data.email;
+
+    }
+
   }
 }
