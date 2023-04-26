@@ -309,10 +309,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   popupShown(e): void {
     if (this.popupData.sts !== '100') {
       this.deleteBtn.visible = false;
-    } else {
-      this.deleteBtn.visible = false;
     }
-
     if (this.popupMode === 'Add') {
       this.popupData.sts = '100';
       this.popupData.deliveryType = 'OUTER';
