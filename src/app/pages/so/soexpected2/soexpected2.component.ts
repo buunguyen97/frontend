@@ -31,6 +31,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   dsUnit = [];
   dsItemAdmin = [];
   dsAllPort = [];
+  dsItem = [];
   // summary
   searchList = [];
 
@@ -75,7 +76,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   ) {
     this.popupCancelClick = this.popupCancelClick.bind(this);
     this.onNew = this.onNew.bind(this);
-    this.isAllowEditing = this.isAllowEditing.bind(this);
     this.popupDeleteClick = this.popupDeleteClick.bind(this);
     this.popupSaveClick = this.popupSaveClick.bind(this);
     this.calculateCustomSummary = this.calculateCustomSummary.bind(this);
@@ -88,13 +88,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   ngAfterViewInit(): void {
     this.utilService.getFoldable(this.mainForm, this.foldableBtn);
     this.utilService.getGridHeight(this.mainGrid);
-    this.initForm();
     this.initData(this.mainForm);
-  }
-
-  initForm(): void {
-
-
   }
 
   ngOnInit(): void {
@@ -112,7 +106,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
     this.codeService.getCode(this.G_TENANT, 'SOSTATUS').subscribe(result => {
       this.dsSoStatus = result.data;
-      this.mainForm.instance.getEditor('sts').option('value', '100'); // 예정
+      this.mainForm.instance.getEditor('sts').option('value', '100');
     });
 
     this.codeService.getCompany(this.G_TENANT, null, true, null, null, null, null, null).subscribe(result => {
@@ -122,7 +116,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
       this.dsShipTo = result.data;
     });
 
-    // 창고
     this.codeService.getCommonWarehouse(Number(this.utilService.getUserUid())).subscribe(result => {
       this.dsWarehouse = result.data;
       this.mainForm.instance.getEditor('warehouseId').option('value', this.utilService.getCommonWarehouseId());
@@ -158,9 +151,12 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.codeService.getItem(this.G_TENANT).subscribe(result => {
       this.dsItemId = result.data;
     });
-    // 항구
+
     this.codeService.getCode(this.G_TENANT, 'PORT').subscribe(result => {
       this.dsAllPort = result.data;
+    });
+    this.codeService.getCode(this.G_TENANT, 'ITEMGB').subscribe(result => {
+      this.dsItem = result.data;
     });
 
   }
@@ -188,7 +184,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
       this.mainFormData.fromShipSchDate = document.getElementsByName('fromShipSchDate').item(1).getAttribute('value');
       this.mainFormData.toShipSchDate = document.getElementsByName('toShipSchDate').item(1).getAttribute('value');
       const result = await this.service.get(this.mainFormData);
-      this.searchList = result.data;  // 서머리를 위한 변수 / 서머리를 사용하지 않으면 불필요
+      this.searchList = result.data;
       if (!result.success) {
         this.utilService.notify_error(result.msg);
         return;
@@ -211,7 +207,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     }
   }
 
-  // 그리드 셀 이동시 호출하는 함수
   onFocusedCellChanging(e, grid): void {
     this.setFocusRow(e.rowIndex, grid);
   }
@@ -222,8 +217,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
 
   showPopup(popupMode, data): void {
-    // this.popupForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
-    this.changes = [];  // 초기화
+    this.changes = [];
     this.popupEntityStore = new ArrayStore(
       {
         data: [],
@@ -246,14 +240,8 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
   }
 
-  isAllowEditing(): boolean {
-    // return this.popupData.sts === RcvCommonUtils.STS_IDLE;
-    return true;
-  }
-
   async onSearchPopup(): Promise<void> {
     if (this.popupData.uid) {
-      // Service의 get 함수 생성
       const result = await this.service.getSoFull(this.popupData);
       if (!result.success) {
         this.utilService.notify_error(result.msg);
@@ -279,9 +267,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     }
   }
 
-  // 추가버튼 이벤트
   addClick(): void {
-    // 입고상태가 예정이 아닐 경우 return
     if (this.popupData.sts !== '100') {
       return;
     }
@@ -291,7 +277,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     });
   }
 
-  // 닫기클릭 이벤트
+
   popupCancelClick(e): void {
     this.popupVisible = false;
     this.popupForm.instance.resetValues();
@@ -326,13 +312,11 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   }
 
 
-  // 신규버튼 이벤트
   async onNew(e): Promise<void> {
     this.deleteBtn.visible = false;
     this.showPopup('Add', {...e.data});
   }
 
-  // 그리드 더블클릭시 호출하는 함수
   rowDblClick(e): void {
     this.deleteBtn.visible = true;
     this.showPopup('Edit', {...e.data});
@@ -363,7 +347,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     }
   }
 
-  // 저장버튼 이벤트
   async popupSaveClick(e): Promise<void> {
     const confirmMsg = this.utilService.convert('confirmSave', this.utilService.convert1('soTx', '입고전표'));
     if (!await this.utilService.confirm(confirmMsg)) {
@@ -375,14 +358,12 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     const currentDate = rangeDate.toDate;
 
     if (selectedDat < currentDate) {
-      this.utilService.notify_error('Selected date after today');
+      this.utilService.notify_error('과거 일자는 선택이 불가능 합니다.');
       return;
     }
 
 
-    // 상품목록 추가여부
     if ((this.popupGrid.instance.totalCount() + this.changes.length) === 0) {
-      // '입고상품 목록을 추가하세요.'
       const msg = this.utilService.convert('com_valid_required', this.utilService.convert('rcvExpect_popupGridTitle'));
       this.utilService.notify_error(msg);
       return;
@@ -401,10 +382,8 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
         const saveContent = this.popupData as SearchVO;
         const detailList = this.collectGridData(this.changes);
 
-        // return;
         for (const detail of detailList) {
           if (detail.expectQty1 <= 0) {
-            // '입고예정수량을 1개 이상 입력하세요.'
             const msg = this.utilService.convert1('gt_expectQty', '입고예정수량을 1개 이상 입력하세요.');
             this.utilService.notify_error(msg);
             return;
@@ -459,7 +438,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   collectGridData(changes: any): any[] {
     const gridList = [];
     for (const rowIndex in changes) {
-      // Insert일 경우 UUID가 들어가 있기 때문에 Null로 매핑한다.
       if (changes[rowIndex].type === 'insert') {
         gridList.push(Object.assign({
           operType: changes[rowIndex].type,
@@ -483,7 +461,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   }
 
   onInitNewRow(e): void {
-    // e.data.itemAdminId = this.dsItemAdmin.length > 0 ? this.dsItemAdmin[0].uid : null;
     e.data.itemAdminId = this.utilService.getCommonItemAdminId();
     e.data.expectQty1 = 0;
     e.data.tenant = this.utilService.getTenant();
@@ -496,9 +473,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     e.data.damageFlg = 'N';
   }
 
-  // 삭제버튼 이벤트
   async deleteClick(): Promise<void> {
-    // 입고상태가 예정이 아닐 경우 return
     if (this.popupData.sts !== '100') {
       return;
     }
@@ -509,7 +484,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
       this.popupGrid.instance.deleteRow(focusedIdx);
       this.popupEntityStore.push([{type: 'remove', key: this.popupGrid.focusedRowKey}]);
 
-      // 삭제된 로우 위로 포커스
       this.popupGrid.focusedRowIndex = focusedIdx - 1;
     }
   }
@@ -519,7 +493,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   }
 
   onOptionChanged(e): void {
-    this.gridUtil.onOptionChangedForSummary(e, this); // 합계 계산
+    this.gridUtil.onOptionChangedForSummary(e, this);
   }
 
   setItemAdminValue(rowData: any, value: any): void {
@@ -528,18 +502,25 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   }
 
   getFilteredItemId(options): any {
-    // const filterSoType = this.dsSoType.filter(el => el.code === this.popupData.soType);
-    let filter = [];
-    if (this.popupData.soType !== 'PURRTN') {
-
-      filter = this.dsItemId.filter(data => data.itemTypecd !== '01');
-
+    const innerCond = [];
+    if (this.popupData.soType === 'PURRTN') {
+      innerCond.push(['itemTypecd', '=', '01']);
     } else {
-      filter = this.dsItemId.filter(data => data.itemTypecd === '01');
-
+      const itemTypeList = this.dsItem;
+      const lastIndex = itemTypeList.length - 1;
+      for (let i = 0; i < lastIndex; i++) {
+        if (itemTypeList[i].code === '01') {
+          continue;
+        }
+        innerCond.push(['itemTypecd', '=', itemTypeList[i].code]);
+        innerCond.push('or');
+      }
+      innerCond.push(['itemTypecd', '=', itemTypeList[lastIndex]]);
     }
+
     return {
-      store: filter
+      store: this.dsItemId,
+      filter: options.data ? innerCond : null
     };
   }
 
