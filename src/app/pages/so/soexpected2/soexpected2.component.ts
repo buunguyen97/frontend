@@ -528,49 +528,18 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   }
 
   getFilteredItemId(options): any {
-    const filterSoType = this.dsSoType.filter(el => el.code === this.popupData.soType);
-    const filter = [];
-    filter.push(['itemAdminId', '=', this.utilService.getCommonItemAdminId()]);
+    // const filterSoType = this.dsSoType.filter(el => el.code === this.popupData.soType);
+    let filter = [];
     if (this.popupData.soType !== 'PURRTN') {
-      if (filterSoType.length > 0) {
-        filter.push('and');
-        const etcColumn1 = filterSoType[0].etcColumn1;
-        const typeArr = (etcColumn1 || '').split(',');
 
-        const innerCond = [];
-        // tslint:disable-next-line:forin
-        for (const idx in typeArr) {
-          const type = typeArr[idx].trim();
+      filter = this.dsItemId.filter(data => data.itemTypecd !== '01');
 
-          if (type === '01') {
-            continue; // skip to the next iteration
-          }
-
-          innerCond.push(['itemTypecd', '=', type]);
-
-          if (Number(idx) !== typeArr.length - 1) {
-            innerCond.push('or');
-          }
-        }
-
-        filter.push(innerCond);
-      }
     } else {
-      filter.push('and');
-      const innerCond = [];
-      innerCond.push(['itemTypecd', '=', '01']);
-      filter.push(innerCond);
-    }
+      filter = this.dsItemId.filter(data => data.itemTypecd === '01');
 
-    console.log('options', options);
-    console.log({
-      store: this.dsItemId,
-      filter: options.data ? filter : null
-    });
+    }
     return {
-      store: this.dsItemId,
-      filter: options.data ? filter : null
-      // filter: options.data ? ['itemAdminId', '=', this.utilService.getCommonItemAdminId()] : null
+      store: filter
     };
   }
 
