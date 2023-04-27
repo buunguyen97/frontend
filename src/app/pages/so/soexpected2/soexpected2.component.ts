@@ -224,6 +224,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
   showPopup(popupMode, data): void {
     // this.popupForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
+    console.log(data);
     this.changes = [];  // 초기화
     this.popupEntityStore = new ArrayStore(
       {
@@ -235,14 +236,14 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.popupDataSource = new DataSource({
       store: this.popupEntityStore
     });
-
-    this.popupData = data;
-    this.popupData = {tenant: this.G_TENANT, ...this.popupData};
     this.popupMode = popupMode;
     this.popupVisible = true;
     if (popupMode !== 'Add') {
+      this.popupData = data;
+      this.popupData = {tenant: this.G_TENANT, ...this.popupData};
       this.onSearchPopup();
       this.dsPort = this.dsAllPort.filter(el => el.etcColumn1 === data.countrycd);
+
     }
 
   }
@@ -262,9 +263,8 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
       } else {
         this.popupGrid.instance.cancelEditData();
         this.utilService.notify_success('search success');
-
-        // this.popupData.moveId = result.data.moveId;
-
+        this.popupData = result.data;
+        this.popupData = {tenant: this.G_TENANT, ...this.popupData};
         this.popupEntityStore = new ArrayStore(
           {
             data: result.data.soDetailList,
@@ -330,7 +330,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
   // 신규버튼 이벤트
   async onNew(e): Promise<void> {
-    console.log(e);
     this.deleteBtn.visible = false;
     this.showPopup('Add', {...e.data});
   }
@@ -373,11 +372,12 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
       return;
     }
 
+    const rangeDate = this.utilService.getDateRange();
+    const selectedDat = this.popupData.shipSchDate;
+    const currentDate = rangeDate.toDate;
 
-    const selectedDate = new Date(this.popupData.shipSchDate);
-    const currentDate = new Date();
-    if (selectedDate < currentDate) {
-      this.utilService.notify_error('Selected date after today' );
+    if (selectedDat < currentDate) {
+      this.utilService.notify_error('Selected date after today');
       return;
     }
 
@@ -572,6 +572,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   onChangedshipSchDate(e): void {
 
   }
+
   onChangedCompany(e): void {
     const filtered = this.dsCompany.filter(el => el.uid === e.value);
     if (filtered.length > 0) {

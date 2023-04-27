@@ -110,45 +110,70 @@ export interface SearchVO {
   tenant: string;
 
   uid: number;
-  rcvKey: string;             // 입고번호
-  sts: string;                // 입고상태
-  stsList: string[];
-  rcvAcceptId: string;        // 입고접수키
-  acceptKey: string;          // 입고접수번호
-  rcvTypecd: string;          // 입고타입
-  rcvSchDate: Date;           // 입고예정일
-  receiveDate: Date;          // 입고실적일
-  supplierId: number;         // 공급처
-  supplierName: string;       // 공급처명
-  rcvSumItemCount: number;    // 총품목수
-  rcvSumQty1: number;         // 총품목수량
-  rcvSumBoxCount: number;     // 총BOX수
-  rcvSumEaCount: number;      // 총EA수
-  actFlg: string;             // 사용여부
-  remarks: string;            // 전표비고
-
-  refName: string;            // 담당자
-  warehouseId: number;        // 창고코드
-  supplierPhone: string;      // 연락처
-  supplierCountrycd: string;  // 국가
-  supplierPortcd: string;     // 항구
-  supplierZip: string;        // 우편번호
-  supplierAddress1: string;   // 주소1
-  supplierAddress2: string;   // 주소2
-  companyId: number;          // companyId
-  logisticsId: number;        // 물류회사
-
-  moveId: number;
-  fromShipSchDate: string;   // from입고예정일
-  toShipSchDate: string;     // to입고예정일
-  fromReceiveDate: string;  // from입고실적일
-  toReceiveDate: string;    // to입고실적일
-
-  ownerId: number;      // 화주
-
-  deliveryType: string;
-  shipSchDate: string;
+  soKey: string;
+  ownerSoNo: string;
+  preOwnerSoNo: string;
   soType: string;
+  partFlg: number;
+  actFlg: string;
+  sts: string;
+
+  companyId: number;
+  ownerId: number;
+  shipSchDate: string;
+  shipDate: Date;
+  delivSchDate: Date;
+  delivDate: Date;
+  carrySchDate: Date;
+  transportPriority: number;
+
+  logisticsId: number;
+  warehouseId: number;
+  customerId: number;
+  shipToId: number;
+  shipToSub: string;
+  delivName: string;
+
+  countrycd: string;
+  zip: string;
+  address1: string;
+  address2: string;
+  port: string;
+  phone: string;
+  email: string;
+  fax: string;
+  refName: string;
+  allocGroup: string;
+
+  carrierId: number;
+  carrierName: string;
+  carrierWbNo: string;
+
+  carrierNo: string;
+  carrierSname: string;
+  otherRefNo1: string;
+  otherRefNo2: string;
+  otherRefNo3: string;
+
+  pickBatchId: number;
+
+  orderId: number;
+  ownerOrderNo: string;
+  orderType: string;
+  custOrderNo: string;
+  originalPoNo: string;
+  rmaNo: string;
+  orderDate: Date;
+  moveId: number;
+  assyId: number;
+
+  remarks: string;
+  deliveryType: string;
+
+  fromShipSchDate: string;
+  toShipSchDate: string;
+  fromShipDate: string;
+  toShipDate: string;
 
   soDetailList: SoDetailVO[];
 }
