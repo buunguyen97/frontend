@@ -83,7 +83,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.setIsSerial = this.setIsSerial.bind(this);
     this.onChangedCountry = this.onChangedCountry.bind(this);
     this.onChangedCompany = this.onChangedCompany.bind(this);
-    this.onChangedshipSchDate = this.onChangedshipSchDate.bind(this);
   }
 
   ngAfterViewInit(): void {
@@ -224,7 +223,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
   showPopup(popupMode, data): void {
     // this.popupForm.instance.getEditor('ownerId').option('value', this.utilService.getCommonOwnerId());
-    console.log(data);
     this.changes = [];  // 초기화
     this.popupEntityStore = new ArrayStore(
       {
@@ -533,25 +531,42 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     const filterSoType = this.dsSoType.filter(el => el.code === this.popupData.soType);
     const filter = [];
     filter.push(['itemAdminId', '=', this.utilService.getCommonItemAdminId()]);
+    if (this.popupData.soType !== 'PURRTN') {
+      if (filterSoType.length > 0) {
+        filter.push('and');
+        const etcColumn1 = filterSoType[0].etcColumn1;
+        const typeArr = (etcColumn1 || '').split(',');
 
-    if (filterSoType.length > 0) {
-      filter.push('and');
-      const etcColumn1 = filterSoType[0].etcColumn1;
-      const typeArr = (etcColumn1 || '').split(',');
+        const innerCond = [];
+        // tslint:disable-next-line:forin
+        for (const idx in typeArr) {
+          const type = typeArr[idx].trim();
 
-      const innerCond = [];
-      // tslint:disable-next-line:forin
-      for (const idx in typeArr) {
-        const type = typeArr[idx].trim();
-        innerCond.push(['itemTypecd', '=', type]);
+          if (type === '01') {
+            continue; // skip to the next iteration
+          }
 
-        if (Number(idx) !== typeArr.length - 1) {
-          innerCond.push('or');
+          innerCond.push(['itemTypecd', '=', type]);
+
+          if (Number(idx) !== typeArr.length - 1) {
+            innerCond.push('or');
+          }
         }
-      }
 
+        filter.push(innerCond);
+      }
+    } else {
+      filter.push('and');
+      const innerCond = [];
+      innerCond.push(['itemTypecd', '=', '01']);
       filter.push(innerCond);
     }
+
+    console.log('options', options);
+    console.log({
+      store: this.dsItemId,
+      filter: options.data ? filter : null
+    });
     return {
       store: this.dsItemId,
       filter: options.data ? filter : null
@@ -567,10 +582,6 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
 
   onChangedCountry(e): void {
     this.dsPort = this.dsAllPort.filter(data => data.etcColumn1 === e.value);
-  }
-
-  onChangedshipSchDate(e): void {
-
   }
 
   onChangedCompany(e): void {
