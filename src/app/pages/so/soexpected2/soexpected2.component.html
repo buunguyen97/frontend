@@ -230,8 +230,10 @@
         <dxi-column [caption]="utilService.convert1('so.soKey', '출고번호')" alignment="center" dataField="soKey"
         ></dxi-column>
         <!-- soType-->
-        <dxi-column [caption]="utilService.convert1('so.soType', '출고유형')" alignment="center" dataField="soType"
-        ></dxi-column>
+        <dxi-column [caption]="utilService.convert1('so.soType', '출고유형')" alignment="left" dataField="soType"
+        >
+          <dxo-lookup [dataSource]=dsSoType displayExpr="display" valueExpr="code"></dxo-lookup>
+        </dxi-column>
         <!--        sts-->
         <dxi-column [caption]="utilService.convert1('so.sts', '출고상태')" alignment="center" dataField="sts">
           <dxo-lookup [dataSource]=dsSoStatus displayExpr="display" valueExpr="code"></dxo-lookup>
@@ -247,7 +249,7 @@
         </dxi-column>
 
         <!--        shipToId-->
-        <dxi-column [caption]="utilService.convert1('so.shipToId', '납품처')" alignment="center"
+        <dxi-column [caption]="utilService.convert1('so.shipToId', '납품처')" alignment="left"
                     dataField="shipToId">
           <dxo-lookup [dataSource]=dsShipTo displayExpr="display" valueExpr="uid"></dxo-lookup>
         </dxi-column>
@@ -263,13 +265,13 @@
                     dataField="shipSchDate"
         ></dxi-column>
         <!-- refName-->
-        <dxi-column [caption]="utilService.convert1('so.refName', '담당자')" alignment="center" dataField="refName"
+        <dxi-column [caption]="utilService.convert1('so.refName', '담당자')" alignment="left" dataField="refName"
         ></dxi-column>
         <!-- phone-->
-        <dxi-column [caption]="utilService.convert1('so.phone', '전화번호')" alignment="center" dataField="phone"
+        <dxi-column [caption]="utilService.convert1('so.phone', '전화번호')" alignment="left" dataField="phone"
         ></dxi-column>
         <!-- email-->
-        <dxi-column [caption]="utilService.convert1('so.email', 'E-Mail')" alignment="center" dataField="email"
+        <dxi-column [caption]="utilService.convert1('so.email', 'E-Mail')" alignment="left" dataField="email"
         ></dxi-column>
         <!--        countrycd-->
         <dxi-column [caption]="utilService.convert1('so.countrycd', '국가')" alignment="center"
@@ -277,13 +279,13 @@
           <dxo-lookup [dataSource]=dsCountry displayExpr="display" valueExpr="code"></dxo-lookup>
         </dxi-column>
         <!-- zip-->
-        <dxi-column [caption]="utilService.convert1('so.zip', '우편번호')" alignment="center" dataField="zip"
+        <dxi-column [caption]="utilService.convert1('so.zip', '우편번호')" alignment="left" dataField="zip"
         ></dxi-column>
         <!-- address1-->
-        <dxi-column [caption]="utilService.convert1('so.address1', '주소1')" alignment="center" dataField="address1"
+        <dxi-column [caption]="utilService.convert1('so.address1', '주소1')" alignment="left" dataField="address1"
         ></dxi-column>
         <!-- address2-->
-        <dxi-column [caption]="utilService.convert1('so.address2', '주소2')" alignment="center" dataField="address2"
+        <dxi-column [caption]="utilService.convert1('so.address2', '주소2')" alignment="left" dataField="address2"
         ></dxi-column>
 
         <dxi-column [caption]="utilService.convert1('so_so_remarks', '비고')" dataField="remarks"
@@ -294,6 +296,7 @@
                     alignment="left" dataField="createdBy">
           <dxo-lookup [dataSource]=dsUser displayExpr="name" valueExpr="uid"></dxo-lookup>
         </dxi-column>
+
         <dxi-column [allowEditing]="false" [caption]="utilService.convert('com_text_createdDatetime')"
                     [visible]=this.utilService.isShowVisibleColumn dataField="createdDatetime"></dxi-column>
         <dxi-column [allowEditing]="false" [caption]="utilService.convert('com_text_modifiedBy')"
@@ -826,7 +829,7 @@
           <!-- isSerial -->
           <!-- createdBy -->
           <dxi-column [allowEditing]="false" [caption]="utilService.convert('com_text_createdBy')"
-                      [visible]=this.utilService.isShowVisibleColumn
+                      [visible]="false"
                       alignment="left" dataField="createdBy">
             <dxo-lookup [dataSource]=dsUser displayExpr="name" valueExpr="uid"></dxo-lookup>
           </dxi-column>
@@ -835,7 +838,7 @@
                       [visible]=this.utilService.isShowVisibleColumn dataField="createdDatetime"></dxi-column>
           <!-- modifiedBy -->
           <dxi-column [allowEditing]="false" [caption]="utilService.convert('com_text_modifiedBy')"
-                      [visible]=this.utilService.isShowVisibleColumn alignment="left" dataField="modifiedBy">
+                      [visible]="false" alignment="left" dataField="modifiedBy">
             <dxo-lookup [dataSource]=dsUser displayExpr="name" valueExpr="uid"></dxo-lookup>
           </dxi-column>
           <!-- modifiedDatetime -->

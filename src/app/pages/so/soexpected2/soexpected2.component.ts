@@ -158,7 +158,9 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
     this.codeService.getCode(this.G_TENANT, 'ITEMGB').subscribe(result => {
       this.dsItem = result.data;
     });
-
+    this.codeService.getUser(this.G_TENANT).subscribe(result => {
+      this.dsUser = result.data;
+    });
   }
 
   initData(form): void {
@@ -294,6 +296,7 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
   popupShown(e): void {
     if (this.popupMode === 'Add') {
       this.popupData.sts = '100';
+      this.saveBtn.visible = true;
       this.popupData.deliveryType = 'OUTER';
       this.popupData.shipSchDate = this.utilService.getFormatDate(new Date());
       this.popupData.warehouseId = this.utilService.getCommonWarehouseId();
@@ -301,12 +304,14 @@ export class Soexpected2Component implements OnInit, AfterViewInit {
       this.popupData.ownerId = this.utilService.getCommonOwnerId();
       this.popupData.soType = 'RENT';
       this.popupData.actFlg = 'Y';
-      this.saveBtn.visible = true;
+
     }
 
     if (this.popupData.sts !== '100') {
       this.deleteBtn.visible = false;
       this.saveBtn.visible = false;
+    } else {
+      this.saveBtn.visible = true;
     }
     this.utilService.setPopupGridHeight(this.popup, this.popupForm, this.popupGrid);
   }
