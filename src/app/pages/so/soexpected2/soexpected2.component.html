@@ -230,7 +230,7 @@
         <dxi-column [caption]="utilService.convert1('so.soKey', '출고번호')" alignment="center" dataField="soKey"
         ></dxi-column>
         <!-- soType-->
-        <dxi-column [caption]="utilService.convert1('so.soType', '출고유형')" alignment="left" dataField="soType"
+        <dxi-column [caption]="utilService.convert1('so.soType', '출고유형')" alignment="center" dataField="soType"
         >
           <dxo-lookup [dataSource]=dsSoType displayExpr="display" valueExpr="code"></dxo-lookup>
         </dxi-column>
@@ -243,7 +243,7 @@
         ></dxi-column>
 
         <!--        companyId-->
-        <dxi-column [caption]="utilService.convert1('so.companyId', '거래처')" alignment="center"
+        <dxi-column [caption]="utilService.convert1('so.companyId', '거래처')" alignment="left"
                     dataField="companyId">
           <dxo-lookup [dataSource]=dsCompany displayExpr="display" valueExpr="uid"></dxo-lookup>
         </dxi-column>
